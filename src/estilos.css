@@ -1,0 +1,295 @@
+/* ==========================================================================
+   FN Edificações — site institucional
+   Regra que guia tudo aqui: sobriedade. O produto é confiança técnica, então o
+   site tem que parecer laudo bem feito, não anúncio. Muito respiro, uma cor de
+   destaque só, e nenhuma animação que chame atenção para si mesma.
+   ========================================================================== */
+
+:root {
+  --azul-marinho: #12335B;
+  --azul-medio: #2C75B5;
+  --azul-claro: #EAF2FB;
+  --areia: #C8A44D;          /* único destaque quente: CTA principal */
+  --areia-escuro: #A8873A;
+  --zap: #1FA855;
+
+  --tinta: #16202E;
+  --tinta-media: #47566B;
+  --tinta-fraca: #7A8798;
+  --linha: #E2E7EE;
+  --fundo: #FFFFFF;
+  --fundo-alt: #F6F8FB;
+
+  --largura: 1120px;
+  --raio: 14px;
+  --sombra: 0 1px 2px rgba(18, 51, 91, .05), 0 12px 32px rgba(18, 51, 91, .07);
+
+  --fonte: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  color: var(--tinta);
+  background: var(--fundo);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+
+h1, h2, h3 { line-height: 1.15; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 1.3rem + 3vw, 3.4rem); font-weight: 800; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.2rem); font-weight: 750; color: var(--azul-marinho); }
+h3 { font-size: 1.06rem; font-weight: 700; }
+p { margin: 0; text-wrap: pretty; }
+
+.env { width: 100%; max-width: var(--largura); margin: 0 auto; padding: 0 20px; }
+
+.secao { padding: clamp(56px, 7vw, 104px) 0; }
+.secao--alt { background: var(--fundo-alt); border-block: 1px solid var(--linha); }
+
+/* Rótulo pequeno acima do título da seção. */
+.olho {
+  font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--azul-medio); margin-bottom: 10px;
+}
+.secao__intro { max-width: 620px; margin-bottom: clamp(32px, 4vw, 52px); }
+.secao__intro p { color: var(--tinta-media); margin-top: 12px; font-size: 1.03rem; }
+
+/* ---------- Botões ----------
+   Hierarquia deliberada: um só botão preenchido por bloco. O contornado é para
+   quem já é cliente e sabe o que procura, não precisa gritar. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 22px; border-radius: 999px; border: 1.5px solid transparent;
+  font: inherit; font-size: .95rem; font-weight: 700; text-decoration: none;
+  cursor: pointer; transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn--principal { background: var(--areia); color: #241C05; }
+.btn--principal:hover { background: var(--areia-escuro); color: #fff; }
+.btn--zap { background: var(--zap); color: #fff; }
+.btn--zap:hover { background: #17904a; }
+.btn--contorno { border-color: rgba(255, 255, 255, .5); color: #fff; }
+.btn--contorno:hover { border-color: #fff; background: rgba(255, 255, 255, .12); }
+.btn--contorno-escuro { border-color: var(--azul-marinho); color: var(--azul-marinho); }
+.btn--contorno-escuro:hover { background: var(--azul-marinho); color: #fff; }
+.btn--bloco { width: 100%; }
+
+:where(a, button, summary, input, textarea):focus-visible {
+  outline: 3px solid var(--azul-medio); outline-offset: 3px; border-radius: 6px;
+}
+
+/* ---------- Cabeçalho ---------- */
+.cabecalho {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(18, 51, 91, .93);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  color: #fff;
+}
+.cabecalho__barra { display: flex; align-items: center; gap: 20px; height: 68px; }
+.marca { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; flex-shrink: 0; }
+/* A logo é azul-escura; sobre o cabeçalho marinho ela sumia. Chip claro resolve sem
+   precisar de uma segunda versão do arquivo. */
+.marca img {
+  height: 38px; width: 38px; object-fit: contain;
+  background: #fff; border-radius: 9px; padding: 3px;
+}
+/* Os dois em bloco: como spans inline eles se sobrepunham no cabeçalho estreito. */
+.marca__nome { display: block; font-weight: 800; font-size: 1.02rem; letter-spacing: -.01em; line-height: 1.2; }
+.marca__linha { display: block; font-size: .68rem; color: rgba(255, 255, 255, .65); letter-spacing: .04em; line-height: 1.2; }
+@media (max-width: 420px) { .marca__linha { display: none; } }
+
+.menu { display: flex; gap: 4px; margin-left: auto; }
+.menu a {
+  padding: 8px 13px; border-radius: 8px; text-decoration: none;
+  color: rgba(255, 255, 255, .82); font-size: .92rem; font-weight: 500;
+}
+.menu a:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+
+.cabecalho__acoes { display: flex; align-items: center; gap: 10px; }
+.cabecalho__acoes .btn { padding: 10px 18px; font-size: .88rem; }
+
+.hamburguer {
+  display: none; background: none; border: 1.5px solid rgba(255, 255, 255, .3);
+  color: #fff; width: 42px; height: 42px; border-radius: 10px; cursor: pointer;
+  align-items: center; justify-content: center; margin-left: auto;
+}
+
+.gaveta { display: none; }
+
+@media (max-width: 940px) {
+  .menu, .cabecalho__acoes { display: none; }
+  .hamburguer { display: inline-flex; }
+  .gaveta {
+    display: block; background: var(--azul-marinho);
+    border-top: 1px solid rgba(255, 255, 255, .12); padding: 12px 0 20px;
+  }
+  .gaveta a.gaveta__link {
+    display: block; padding: 12px 4px; color: rgba(255, 255, 255, .88);
+    text-decoration: none; font-weight: 500; border-bottom: 1px solid rgba(255, 255, 255, .08);
+  }
+  .gaveta__acoes { display: grid; gap: 10px; margin-top: 16px; }
+}
+
+/* ---------- Hero ---------- */
+.hero { background: var(--azul-marinho); color: #fff; padding: clamp(48px, 6vw, 84px) 0 clamp(56px, 6vw, 92px); }
+.hero__grade { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+.hero__olho {
+  display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #fff;
+  border: 1px solid rgba(255, 255, 255, .35); border-radius: 999px; padding: 5px 14px; margin-bottom: 20px;
+}
+.hero h1 { color: #fff; }
+.hero h1 em { font-style: normal; color: var(--areia); }
+.hero__texto { color: rgba(255, 255, 255, .8); font-size: 1.08rem; margin-top: 18px; max-width: 30em; }
+.hero__acoes { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+/* .55 deixava o contraste no limite de 4.5:1 sobre o marinho; .72 passa com folga. */
+.hero__apoio { margin-top: 16px; font-size: .85rem; color: rgba(255, 255, 255, .72); }
+
+.hero__figura { position: relative; }
+.hero__figura img {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: 18px; border: 1px solid rgba(255, 255, 255, .16);
+}
+.hero__selo {
+  position: absolute; left: -14px; bottom: -18px;
+  background: #fff; color: var(--azul-marinho); border-radius: 12px;
+  padding: 12px 16px; box-shadow: var(--sombra); max-width: 210px;
+}
+.hero__selo strong { display: block; font-size: 1.5rem; line-height: 1; }
+.hero__selo span { font-size: .78rem; color: var(--tinta-media); }
+
+@media (max-width: 900px) {
+  .hero__grade { grid-template-columns: 1fr; }
+  .hero__figura { order: -1; }
+  .hero__selo { left: auto; right: 10px; bottom: -14px; }
+}
+
+/* ---------- Faixa de credibilidade ---------- */
+.faixa { background: var(--azul-claro); border-block: 1px solid var(--linha); }
+.faixa__grade {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  padding: 26px 0; text-align: center;
+}
+.faixa__item strong { display: block; font-size: 1.5rem; color: var(--azul-marinho); line-height: 1.1; }
+.faixa__item span { font-size: .86rem; color: var(--tinta-media); }
+@media (max-width: 640px) { .faixa__grade { grid-template-columns: 1fr; gap: 14px; } }
+
+/* ---------- Cartões de serviço ---------- */
+.servicos { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 860px) { .servicos { grid-template-columns: 1fr; } }
+
+.servico {
+  background: #fff; border: 1px solid var(--linha); border-radius: var(--raio);
+  padding: 28px; display: flex; flex-direction: column; gap: 14px;
+}
+.servico__num {
+  font-size: .72rem; font-weight: 800; letter-spacing: .12em;
+  color: var(--azul-medio); background: var(--azul-claro);
+  border-radius: 999px; padding: 4px 12px; align-self: flex-start;
+}
+.servico p { color: var(--tinta-media); font-size: .97rem; }
+.servico ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.servico li { display: flex; gap: 9px; align-items: flex-start; font-size: .94rem; color: var(--tinta); }
+.servico li svg { flex-shrink: 0; margin-top: 3px; color: var(--azul-medio); }
+.servico .btn { margin-top: auto; }
+
+/* ---------- Como funciona: linha do tempo ---------- */
+.passos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; }
+.passos::before {
+  content: ""; position: absolute; top: 21px; left: 8%; right: 8%;
+  height: 2px; background: var(--linha);
+}
+.passo { position: relative; text-align: center; }
+.passo__bola {
+  width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 16px;
+  background: var(--azul-marinho); color: #fff; display: grid; place-items: center;
+  font-weight: 800; font-size: .92rem; position: relative; z-index: 1;
+  border: 4px solid var(--fundo-alt);
+}
+.passo p { color: var(--tinta-media); font-size: .91rem; margin-top: 7px; }
+@media (max-width: 820px) {
+  .passos { grid-template-columns: 1fr; gap: 26px; text-align: left; }
+  .passos::before { display: none; }
+  .passo { display: grid; grid-template-columns: 44px 1fr; gap: 16px; text-align: left; align-items: start; }
+  .passo__bola { margin: 0; }
+}
+
+/* ---------- FN Club ---------- */
+.club { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
+@media (max-width: 860px) { .club { grid-template-columns: 1fr; } }
+.club__lista { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .club__lista { grid-template-columns: 1fr; } }
+.club__item {
+  background: #fff; border: 1px solid var(--linha); border-radius: 10px;
+  padding: 12px 14px; font-size: .9rem; font-weight: 600; color: var(--azul-marinho);
+}
+.club__item span { display: block; font-weight: 400; font-size: .8rem; color: var(--tinta-fraca); margin-top: 2px; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 780px; }
+.faq details {
+  border: 1px solid var(--linha); border-radius: 12px; background: #fff;
+  padding: 0 18px; margin-bottom: 10px;
+}
+.faq details[open] { border-color: var(--azul-medio); }
+.faq summary {
+  cursor: pointer; list-style: none; padding: 16px 0; font-weight: 650;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  color: var(--azul-marinho);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-size: 1.3rem; color: var(--azul-medio); line-height: 1; }
+.faq details[open] summary::after { content: "–"; }
+.faq details p { padding: 0 0 18px; color: var(--tinta-media); font-size: .96rem; }
+
+/* ---------- Chamada final ---------- */
+.final { background: var(--azul-marinho); color: #fff; text-align: center; }
+.final h2 { color: #fff; }
+.final p { color: rgba(255, 255, 255, .78); margin: 14px auto 28px; max-width: 46ch; }
+.final__acoes { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Rodapé ---------- */
+.rodape { background: #0D2543; color: rgba(255, 255, 255, .72); font-size: .9rem; padding: 48px 0 28px; }
+.rodape__grade { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
+@media (max-width: 760px) { .rodape__grade { grid-template-columns: 1fr; gap: 26px; } }
+.rodape h4 {
+  color: #fff; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase;
+  margin: 0 0 12px; font-weight: 700;
+}
+.rodape a { color: rgba(255, 255, 255, .8); text-decoration: none; }
+.rodape a:hover { color: #fff; text-decoration: underline; }
+.rodape ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rodape__base {
+  margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .12);
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  font-size: .82rem; color: rgba(255, 255, 255, .5);
+}
+
+/* Botão flutuante do WhatsApp, só no celular — onde a conversa realmente acontece. */
+.zap-flutuante {
+  position: fixed; right: 16px; bottom: 16px; z-index: 60;
+  width: 54px; height: 54px; border-radius: 50%; background: var(--zap); color: #fff;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+}
+@media (max-width: 940px) { .zap-flutuante { display: flex; } }
+
+.pular {
+  position: absolute; left: -9999px; background: #fff; color: var(--azul-marinho);
+  padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0;
+}
+.pular:focus { left: 0; top: 0; }
