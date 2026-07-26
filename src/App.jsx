@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 /* ============================================================================
    Site institucional da FN Edificações.
@@ -26,6 +26,7 @@ const TELEFONE_EXIBIDO = "(81) 98306-1305";
 const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
+  ["#entregas", "Entregas"],
   ["#parceiros", "FN Club"],
   ["#duvidas", "Dúvidas"],
   ["#contato", "Contato"],
@@ -119,6 +120,45 @@ const DUVIDAS = [
     "Depende do que será feito e do que o seu condomínio exige. Reformas que mexem em estrutura, instalações ou vedações normalmente exigem. Fale com a gente com o escopo em mãos que avaliamos qual documento se aplica ao seu caso.",
   ],
 ];
+
+/* Fotos das entregas de chaves. São registros reais dos atendimentos — sem legenda
+   inventada e sem nota: a avaliação de verdade vem dos clientes, pelo sistema, e
+   aparece na seção de depoimentos quando o Atendimento aprova. */
+const ENTREGAS = Array.from({ length: 20 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
+
+function GaleriaEntregas() {
+  const trilho = useRef(null);
+
+  const rolar = (direcao) => {
+    const el = trilho.current;
+    if (!el) return;
+    // Rola uma "página" de cartões, respeitando o que couber na largura atual.
+    el.scrollBy({ left: direcao * (el.clientWidth * 0.9), behavior: "smooth" });
+  };
+
+  return (
+    <div className="galeria">
+      <div className="galeria__trilho" ref={trilho} tabIndex={0}
+        role="region" aria-label="Fotos de entregas de chaves realizadas">
+        {ENTREGAS.map((nome, i) => (
+          <figure className="entrega" key={nome}>
+            <img
+              src={`/img/entregas/${nome}-540.webp`}
+              srcSet={`/img/entregas/${nome}-320.webp 320w, /img/entregas/${nome}-540.webp 540w, /img/entregas/${nome}-1080.webp 1080w`}
+              sizes="(max-width: 700px) 70vw, 340px"
+              alt={`Entrega de chaves acompanhada pela equipe da FN Edificações (${i + 1} de ${ENTREGAS.length})`}
+              loading={i < 3 ? "eager" : "lazy"}
+              decoding="async"
+            />
+          </figure>
+        ))}
+      </div>
+
+      <button className="galeria__seta galeria__seta--esq" onClick={() => rolar(-1)} aria-label="Ver fotos anteriores">‹</button>
+      <button className="galeria__seta galeria__seta--dir" onClick={() => rolar(1)} aria-label="Ver próximas fotos">›</button>
+    </div>
+  );
+}
 
 function Foto({ nome, alt, className, ...resto }) {
   return (
@@ -317,6 +357,21 @@ export default function App() {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* ---------------- Entregas realizadas ---------------- */}
+        <section className="secao" id="entregas">
+          <div className="env">
+            <div className="secao__intro">
+              <p className="olho">Entregas realizadas</p>
+              <h2>O dia da chave é o que a gente protege.</h2>
+              <p>
+                Cada foto é uma vistoria concluída antes do aceite — o cliente recebendo
+                o imóvel com o laudo em mãos e as pendências registradas.
+              </p>
+            </div>
+          </div>
+          <GaleriaEntregas />
         </section>
 
         {/* ---------------- Dúvidas ---------------- */}

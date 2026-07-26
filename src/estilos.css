@@ -295,3 +295,41 @@ p { margin: 0; text-wrap: pretty; }
   padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0;
 }
 .pular:focus { left: 0; top: 0; }
+
+/* ---------- Galeria de entregas ----------
+   Rolagem horizontal com encaixe: no celular o dedo arrasta, no computador as setas
+   levam uma "página" por vez. Três cartões por vez em tela grande. */
+.galeria { position: relative; }
+
+.galeria__trilho {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 20px 14px; scroll-padding-left: 20px;
+  scrollbar-width: thin; scrollbar-color: var(--linha) transparent;
+}
+/* Centraliza os cartões na largura do site, sem cortar a rolagem nas bordas. */
+@media (min-width: 1160px) {
+  .galeria__trilho { padding-left: calc((100vw - var(--largura)) / 2 + 20px); }
+}
+.galeria__trilho::-webkit-scrollbar { height: 8px; }
+.galeria__trilho::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 99px; }
+
+.entrega {
+  margin: 0; flex: 0 0 auto; width: 340px; scroll-snap-align: start;
+  border-radius: 14px; overflow: hidden; background: var(--fundo-alt);
+  border: 1px solid var(--linha);
+}
+.entrega img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; }
+
+@media (max-width: 700px) { .entrega { width: 70vw; max-width: 300px; } }
+
+.galeria__seta {
+  position: absolute; top: calc(50% - 22px); width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--linha); background: #fff; color: var(--azul-marinho);
+  font-size: 1.6rem; line-height: 1; cursor: pointer; box-shadow: var(--sombra);
+  display: none; align-items: center; justify-content: center;
+}
+.galeria__seta:hover { background: var(--azul-claro); }
+.galeria__seta--esq { left: 12px; }
+.galeria__seta--dir { right: 12px; }
+/* Setas só onde não há gesto de arrastar. */
+@media (min-width: 940px) { .galeria__seta { display: flex; } }
