@@ -301,9 +301,12 @@ export default function App() {
                 foi atendido pela FN. Cada parceiro atua sob responsabilidade própria,
                 conforme o serviço contratado.
               </p>
+              {/* A vitrine de parceiros mora no sistema, que é onde o cadastro, a aprovação
+                  e os cupons acontecem. O site antigo tinha um diretório próprio que
+                  mostrava "0 parceiro(s)" — não vale recriar uma segunda lista vazia. */}
               <a className="btn btn--contorno-escuro" style={{ marginTop: 24 }}
-                href={WHATSAPP} target="_blank" rel="noopener">
-                Conhecer os parceiros
+                href={SISTEMA} target="_blank" rel="noopener">
+                Ver parceiros e benefícios
               </a>
             </div>
 
