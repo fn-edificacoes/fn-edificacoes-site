@@ -157,10 +157,9 @@ export default function App() {
           </nav>
 
           <div className="cabecalho__acoes">
-            {/* Contornado: quem já é cliente sabe o que procura, não precisa competir. */}
-            <a className="btn btn--contorno" href={SISTEMA} target="_blank" rel="noopener">
-              Acessar o Sistema
-            </a>
+            {/* Um botão só. Havia também um "Acessar o Sistema" ao lado, mas os dois levavam
+                ao mesmo endereço — e a tela que abre já separa cliente, parceiro e equipe.
+                Dois botões idênticos só fazem o visitante parar para escolher. */}
             <a className="btn btn--principal" href={SISTEMA} target="_blank" rel="noopener">
               Solicitar vistoria
             </a>
@@ -181,9 +180,6 @@ export default function App() {
               <div className="gaveta__acoes">
                 <a className="btn btn--principal btn--bloco" href={SISTEMA} target="_blank" rel="noopener">
                   Solicitar vistoria
-                </a>
-                <a className="btn btn--contorno btn--bloco" href={SISTEMA} target="_blank" rel="noopener">
-                  Acessar o Sistema
                 </a>
               </div>
             </div>
