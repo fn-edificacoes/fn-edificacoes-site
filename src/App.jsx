@@ -68,6 +68,7 @@ const SERVICOS = [
       "Esquadrias, vidros e áreas molhadas",
       "Laudo digital com fotos e recomendações",
     ],
+    textoBotao: "Solicitar vistoria",
   },
   {
     numero: "02",
@@ -80,6 +81,7 @@ const SERVICOS = [
       "Responsabilidade técnica registrada",
       "Acompanhamento até a aprovação",
     ],
+    textoBotao: "Solicitar documentação",
   },
 ];
 
@@ -141,7 +143,7 @@ export default function App() {
       <header className="cabecalho">
         <div className="env cabecalho__barra">
           <a className="marca" href="#inicio" aria-label="FN Edificações, página inicial">
-            <img src="/img/logo-fn-transparente-800.webp" alt="" width="38" height="38" />
+            <img src="/img/logo-fn-transparente-800.webp" alt="" width="48" height="48" />
             <span>
               <span className="marca__nome">FN Edificações</span>
               <span className="marca__linha">Vistorias e responsabilidade técnica</span>
@@ -258,8 +260,8 @@ export default function App() {
                       <li key={i}><Check /> {i}</li>
                     ))}
                   </ul>
-                  <a className="btn btn--contorno-escuro" href={SISTEMA} target="_blank" rel="noopener">
-                    Solicitar vistoria
+                  <a className="btn btn--azul" href={SISTEMA} target="_blank" rel="noopener">
+                    {s.textoBotao}
                   </a>
                 </article>
               ))}

@@ -85,6 +85,8 @@ p { margin: 0; text-wrap: pretty; }
 .btn--contorno:hover { border-color: #fff; background: rgba(255, 255, 255, .12); }
 .btn--contorno-escuro { border-color: var(--azul-marinho); color: var(--azul-marinho); }
 .btn--contorno-escuro:hover { background: var(--azul-marinho); color: #fff; }
+.btn--azul { background: var(--azul-medio); color: #fff; }
+.btn--azul:hover { background: var(--azul-marinho); }
 .btn--bloco { width: 100%; }
 
 :where(a, button, summary, input, textarea):focus-visible {
@@ -104,7 +106,7 @@ p { margin: 0; text-wrap: pretty; }
 /* A logo é azul-escura; sobre o cabeçalho marinho ela sumia. Chip claro resolve sem
    precisar de uma segunda versão do arquivo. */
 .marca img {
-  height: 38px; width: 38px; object-fit: contain;
+  height: 48px; width: 48px; object-fit: contain;
   background: #fff; border-radius: 9px; padding: 3px;
 }
 /* Os dois em bloco: como spans inline eles se sobrepunham no cabeçalho estreito. */
