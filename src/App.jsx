@@ -27,6 +27,7 @@ const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
   ["#entregas", "Entregas"],
+  ["#vistorias", "A vistoria"],
   ["#parceiros", "FN Club"],
   ["#duvidas", "Dúvidas"],
   ["#contato", "Contato"],
@@ -124,39 +125,85 @@ const DUVIDAS = [
 /* Fotos das entregas de chaves. São registros reais dos atendimentos — sem legenda
    inventada e sem nota: a avaliação de verdade vem dos clientes, pelo sistema, e
    aparece na seção de depoimentos quando o Atendimento aprova. */
-const ENTREGAS = Array.from({ length: 20 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
+const ENTREGAS = Array.from({ length: 24 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
+const VISTORIAS = Array.from({ length: 9 }, (_, i) => `vistoria-${String(i + 1).padStart(2, "0")}`);
 
-function GaleriaEntregas() {
+/* Vídeos curtos. Os de vistoria e defeito são mudos de propósito — som que dispara
+   sozinho faz o visitante fechar a aba, e ali o que importa é a imagem. Nos de cliente
+   recebendo as chaves o áudio fica, porque a fala é o conteúdo. */
+const VIDEOS_TRABALHO = [
+  ["vistoria-01", "Verificação de instalações"],
+  ["vistoria-02", "Conferência de acabamentos"],
+  ["vistoria-03", "Teste de percussão em revestimento"],
+  ["defeito-01", "Não conformidade registrada"],
+  ["defeito-02", "Falha de acabamento"],
+  ["defeito-03", "Verificação de esquadria"],
+];
+const VIDEOS_CLIENTES = [
+  ["cliente-01", "Entrega de chaves"],
+  ["cliente-02", "Entrega de chaves"],
+];
+
+function Carrossel({ children, rotulo }) {
   const trilho = useRef(null);
 
   const rolar = (direcao) => {
     const el = trilho.current;
     if (!el) return;
-    // Rola uma "página" de cartões, respeitando o que couber na largura atual.
     el.scrollBy({ left: direcao * (el.clientWidth * 0.9), behavior: "smooth" });
   };
 
   return (
     <div className="galeria">
-      <div className="galeria__trilho" ref={trilho} tabIndex={0}
-        role="region" aria-label="Fotos de entregas de chaves realizadas">
-        {ENTREGAS.map((nome, i) => (
-          <figure className="entrega" key={nome}>
-            <img
-              src={`/img/entregas/${nome}-540.webp`}
-              srcSet={`/img/entregas/${nome}-320.webp 320w, /img/entregas/${nome}-540.webp 540w, /img/entregas/${nome}-1080.webp 1080w`}
-              sizes="(max-width: 700px) 70vw, 340px"
-              alt={`Entrega de chaves acompanhada pela equipe da FN Edificações (${i + 1} de ${ENTREGAS.length})`}
-              loading={i < 3 ? "eager" : "lazy"}
-              decoding="async"
-            />
-          </figure>
-        ))}
+      <div className="galeria__trilho" ref={trilho} tabIndex={0} role="region" aria-label={rotulo}>
+        {children}
       </div>
-
-      <button className="galeria__seta galeria__seta--esq" onClick={() => rolar(-1)} aria-label="Ver fotos anteriores">‹</button>
-      <button className="galeria__seta galeria__seta--dir" onClick={() => rolar(1)} aria-label="Ver próximas fotos">›</button>
+      <button className="galeria__seta galeria__seta--esq" onClick={() => rolar(-1)} aria-label="Ver anteriores">‹</button>
+      <button className="galeria__seta galeria__seta--dir" onClick={() => rolar(1)} aria-label="Ver próximos">›</button>
     </div>
+  );
+}
+
+function LinhaDeFotos({ nomes, pasta, descricao, rotulo }) {
+  return (
+    <Carrossel rotulo={rotulo}>
+      {nomes.map((nome, i) => (
+        <figure className="entrega" key={nome}>
+          <img
+            src={`/img/${pasta}/${nome}-540.webp`}
+            srcSet={`/img/${pasta}/${nome}-320.webp 320w, /img/${pasta}/${nome}-540.webp 540w, /img/${pasta}/${nome}-1080.webp 1080w`}
+            sizes="(max-width: 700px) 70vw, 340px"
+            alt={`${descricao} (${i + 1} de ${nomes.length})`}
+            loading={i < 3 ? "eager" : "lazy"} decoding="async"
+          />
+        </figure>
+      ))}
+    </Carrossel>
+  );
+}
+
+/* O vídeo só é baixado quando a pessoa toca em play: até lá aparece o poster, que é
+   uma imagem leve. Sem isso, oito vídeos custariam 8 MB a quem só queria ler a página. */
+function CartaoVideo({ nome, legenda, comSom }) {
+  const [tocando, setTocando] = useState(false);
+
+  return (
+    <figure className="videocard">
+      {tocando ? (
+        <video src={`/video/${nome}.mp4`} poster={`/video/${nome}.jpg`}
+          controls autoPlay playsInline muted={!comSom} preload="auto" />
+      ) : (
+        <button className="videocard__capa" onClick={() => setTocando(true)}
+          aria-label={`Assistir: ${legenda}`}>
+          <img src={`/video/${nome}.jpg`} alt="" loading="lazy" decoding="async" />
+          <span className="videocard__play" aria-hidden="true">▶</span>
+        </button>
+      )}
+      <figcaption>
+        {legenda}
+        {!comSom && <span className="videocard__mudo"> · sem áudio</span>}
+      </figcaption>
+    </figure>
   );
 }
 
@@ -250,7 +297,13 @@ export default function App() {
             </div>
 
             <figure className="hero__figura" style={{ margin: 0 }}>
-              <Foto nome="hero-inspector" alt="Técnico da FN Edificações realizando vistoria em um imóvel" />
+              {/* Retrato: a foto mostra o técnico agachado registrando um ralo — cortar
+                  para paisagem tiraria ou ele ou o ponto verificado, que é a cena toda. */}
+              <img className="hero__retrato"
+                src="/img/hero-vistoria-1120.webp"
+                srcSet="/img/hero-vistoria-560.webp 560w, /img/hero-vistoria-1120.webp 1120w"
+                sizes="(max-width: 900px) 100vw, 46vw"
+                alt="Técnico da FN Edificações registrando a verificação de um ralo durante vistoria" />
               <figcaption className="hero__selo">
                 <strong>+1.000</strong>
                 <span>imóveis vistoriados em PE</span>
@@ -371,7 +424,49 @@ export default function App() {
               </p>
             </div>
           </div>
-          <GaleriaEntregas />
+          <LinhaDeFotos nomes={ENTREGAS} pasta="entregas" rotulo="Fotos de entregas de chaves"
+            descricao="Entrega de chaves acompanhada pela equipe da FN Edificações" />
+        </section>
+
+        {/* ---------------- Vistoriadores em campo ---------------- */}
+        <section className="secao secao--alt" id="vistorias">
+          <div className="env">
+            <div className="secao__intro">
+              <p className="olho">A vistoria por dentro</p>
+              <h2>É item por item, ambiente por ambiente.</h2>
+              <p>
+                Registros do trabalho em campo: o técnico percorrendo a unidade, testando
+                e documentando cada ponto que entra no laudo.
+              </p>
+            </div>
+          </div>
+
+          <LinhaDeFotos nomes={VISTORIAS} pasta="vistorias" rotulo="Fotos de vistorias em campo"
+            descricao="Técnico da FN Edificações durante vistoria" />
+
+          <div className="env" style={{ marginTop: 34 }}>
+            <div className="videos">
+              {VIDEOS_TRABALHO.map(([nome, legenda]) => (
+                <CartaoVideo key={nome} nome={nome} legenda={legenda} comSom={false} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- Clientes recebendo ---------------- */}
+        <section className="secao" id="depoimentos">
+          <div className="env">
+            <div className="secao__intro">
+              <p className="olho">O momento da chave</p>
+              <h2>A parte que a gente faz por último.</h2>
+              <p>Clientes recebendo o imóvel com o laudo em mãos.</p>
+            </div>
+            <div className="videos videos--duplo">
+              {VIDEOS_CLIENTES.map(([nome, legenda]) => (
+                <CartaoVideo key={nome} nome={nome} legenda={legenda} comSom />
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* ---------------- Dúvidas ---------------- */}

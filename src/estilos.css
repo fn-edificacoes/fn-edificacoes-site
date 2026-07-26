@@ -333,3 +333,42 @@ p { margin: 0; text-wrap: pretty; }
 .galeria__seta--dir { right: 12px; }
 /* Setas só onde não há gesto de arrastar. */
 @media (min-width: 940px) { .galeria__seta { display: flex; } }
+
+/* ---------- Hero com foto em retrato ---------- */
+.hero__retrato {
+  width: 100%; max-width: 420px; margin-left: auto;
+  aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: 18px; border: 1px solid rgba(255, 255, 255, .16);
+}
+@media (max-width: 900px) { .hero__retrato { margin: 0 auto; max-width: 340px; } }
+
+/* ---------- Vídeos ----------
+   Grade normal, não carrossel: são poucos e vale ver todos de uma vez. */
+.videos {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.videos--duplo { grid-template-columns: repeat(2, 1fr); max-width: 720px; }
+@media (max-width: 860px) { .videos, .videos--duplo { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .videos, .videos--duplo { grid-template-columns: 1fr; } }
+
+.videocard { margin: 0; }
+.videocard video,
+.videocard__capa img {
+  width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block;
+  border-radius: 14px; background: #0D2543;
+}
+.videocard__capa {
+  position: relative; display: block; width: 100%; padding: 0; border: 0;
+  background: none; cursor: pointer; border-radius: 14px; overflow: hidden;
+}
+.videocard__play {
+  position: absolute; inset: 0; margin: auto; width: 58px; height: 58px;
+  border-radius: 50%; background: rgba(18, 51, 91, .82); color: #fff;
+  display: grid; place-items: center; font-size: 1.3rem; padding-left: 4px;
+  transition: transform .15s ease, background-color .15s ease;
+}
+.videocard__capa:hover .videocard__play { background: var(--azul-marinho); transform: scale(1.06); }
+.videocard figcaption {
+  font-size: .86rem; color: var(--tinta-media); margin-top: 8px;
+}
+.videocard__mudo { color: var(--tinta-fraca); }
