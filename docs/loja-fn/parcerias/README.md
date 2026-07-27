@@ -60,6 +60,30 @@ que você escreveu sobre ele.
 
 ---
 
+## Sem CNPJ ainda? O que dá para fazer agora
+
+O CNPJ está em obtenção, e isso muda a ordem — mas trava menos do que parece.
+
+| Programa | Aceita CPF? | Ação |
+|---|---|---|
+| **Mercado Livre** | Sim | **Cadastrar agora** |
+| **Amazon Associados** | Sim | Cadastrar quando houver tráfego (regra de vendas mínimas) |
+| **Shopee** | Sim | **Cadastrar agora** |
+| **Magalu** | Sim | **Cadastrar agora** |
+| **Casas Bahia** (Awin) | **Não** — a rede exige CNPJ | Aguardar |
+| **MadeiraMadeira** (Awin) | **Não** | Aguardar |
+| **Leroy Merlin** (Rakuten) | Confirmar no cadastro | Tentar; o perfil profissional da FN pesa a favor |
+
+**Recomendação:** cadastre hoje os três de autoatendimento que aceitam CPF e comece a gerar
+histórico. Quando o CNPJ sair, **migre o cadastro para PJ** — todos permitem, e ter histórico de
+vendas facilita a aprovação nas redes depois.
+
+Um cuidado: se cadastrar como pessoa física, a comissão cai no CPF e vira rendimento tributável
+pessoal. Vale alinhar com a contabilidade antes, para não criar um problema fiscal por causa de
+uma pressa de duas semanas.
+
+---
+
 ## Antes de submeter qualquer inscrição: três coisas que derrubam aprovação
 
 O analista da rede abre o seu site e olha. É uma avaliação de cinco minutos, e ela reprova por
