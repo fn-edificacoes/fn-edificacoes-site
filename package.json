@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "otimizar-imagens": "node scripts/otimizar-imagens.js"
+    "otimizar-imagens": "node scripts/otimizar-imagens.js",
+    "docs:catalogo": "node scripts/gerar-docs-catalogo.js",
+    "docs:financeiro": "node scripts/gerar-financeiro.js",
+    "docs": "npm run docs:catalogo && npm run docs:financeiro"
   },
   "dependencies": {
     "react": "^18.3.1",

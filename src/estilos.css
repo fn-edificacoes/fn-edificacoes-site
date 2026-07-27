@@ -89,6 +89,14 @@ p { margin: 0; text-wrap: pretty; }
 .btn--azul:hover { background: var(--azul-marinho); }
 .btn--bloco { width: 100%; }
 
+/* O nowrap acima existe para o botão não quebrar feio no meio de uma frase de
+   três palavras. Em tela estreita, porém, um rótulo longo ("Políticas, LGPD e
+   programa de afiliados") estoura a largura da página e cria rolagem lateral em
+   toda a seção. Abaixo de 480px, quebrar é o menor dos males. */
+@media (max-width: 480px) {
+  .btn { white-space: normal; text-align: center; }
+}
+
 :where(a, button, summary, input, textarea):focus-visible {
   outline: 3px solid var(--azul-medio); outline-offset: 3px; border-radius: 6px;
 }
@@ -240,6 +248,22 @@ p { margin: 0; text-wrap: pretty; }
   padding: 12px 14px; font-size: .9rem; font-weight: 600; color: var(--azul-marinho);
 }
 .club__item span { display: block; font-weight: 400; font-size: .8rem; color: var(--tinta-fraca); margin-top: 2px; }
+
+/* ---------- Chamada da Loja Recomendada FN ----------
+   Mesma estrutura do bloco do FN Club, de propósito: são as duas pontas do que
+   vem depois do laudo, e devem pesar igual na página. */
+.loja-chamada {
+  display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+@media (max-width: 860px) { .loja-chamada { grid-template-columns: 1fr; } }
+.loja-chamada__kits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .loja-chamada__kits { grid-template-columns: 1fr; } }
+.loja-chamada__kit {
+  background: #fff; border: 1px solid var(--linha); border-radius: 10px;
+  padding: 12px 14px; font-size: .9rem; font-weight: 600; color: var(--azul-marinho);
+}
+.loja-chamada__kit span { display: block; font-weight: 400; font-size: .78rem; color: var(--tinta-fraca); margin-top: 2px; }
 
 /* ---------- FAQ ---------- */
 .faq { max-width: 780px; }

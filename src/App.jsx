@@ -23,14 +23,29 @@ const WHATSAPP = "https://wa.me/5581983061305?text=" +
 const INSTAGRAM = "https://instagram.com/fn.edificacoes";
 const TELEFONE_EXIBIDO = "(81) 98306-1305";
 
+const LOJA = "/loja/";
+
+/* A ordem do menu segue a ordem da página. Parece detalhe, mas menu que salta
+   para trás faz o visitante perder o lugar em que estava. */
 const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
+  ["#loja", "Loja FN"],
+  ["#parceiros", "FN Club"],
   ["#entregas", "Entregas"],
   ["#vistorias", "A vistoria"],
-  ["#parceiros", "FN Club"],
   ["#duvidas", "Dúvidas"],
   ["#contato", "Contato"],
+];
+
+/* Os kits que aparecem na chamada da loja no site institucional. São os quatro
+   de maior urgência no dia da chave — a lista completa mora em /loja/, e
+   duplicar o catálogo aqui só criaria duas verdades para manter. */
+const KITS_VITRINE = [
+  ["Kit Dia das Chaves", "O que levar na vistoria"],
+  ["Kit Primeira Noite", "Dormir lá já na primeira semana"],
+  ["Kit Ferramentas do Morador", "Furar parede sem furar o cano"],
+  ["Kit Varanda Segura", "Criança e pet antes da mudança"],
 ];
 
 /* Ícones locais: nenhuma biblioteca externa só para desenhar cinco traços. */
@@ -381,6 +396,49 @@ export default function App() {
           </div>
         </section>
 
+        {/* ---------------- Loja Recomendada FN ----------------
+            A vistoria termina no aceite, mas o problema do cliente não: no dia
+            seguinte ele tem um apartamento vazio e uma lista de compras que não
+            sabe montar. A loja é a continuação natural do laudo — e é a única
+            recomendação do mercado feita por quem esteve dentro da unidade. */}
+        <section className="secao secao--alt" id="loja">
+          <div className="env loja-chamada">
+            <div>
+              <p className="olho">Loja Recomendada FN</p>
+              <h2>Depois do laudo, a lista de compras.</h2>
+              <p style={{ color: "var(--tinta-media)", marginTop: 12 }}>
+                Reunimos em um só lugar o que mais de mil vistorias mostraram que falta em
+                apartamento novo — organizado por tempo de chave, não por prateleira de loja.
+                A FN não vende nem estoca nada: indicamos, e a compra acontece no site do
+                parceiro, pelo mesmo preço que você pagaria indo direto.
+              </p>
+              <ul style={{ listStyle: "none", padding: 0, margin: "20px 0 0", display: "grid", gap: 9 }}>
+                {[
+                  "300 produtos curados e 18 kits por momento da jornada",
+                  "Recomendação que considera o que o laudo encontrou na sua unidade",
+                  "Comissão paga pelo parceiro, sem alterar o seu preço",
+                ].map((item) => (
+                  <li key={item} style={{ display: "flex", gap: 9, alignItems: "flex-start", fontSize: ".94rem" }}>
+                    <Check style={{ marginTop: 4, color: "var(--azul-medio)", flexShrink: 0 }} /> {item}
+                  </li>
+                ))}
+              </ul>
+              <a className="btn btn--azul" style={{ marginTop: 24 }} href={LOJA}>
+                Entrar na Loja FN
+              </a>
+            </div>
+
+            <div className="loja-chamada__kits">
+              {KITS_VITRINE.map(([titulo, texto]) => (
+                <div className="loja-chamada__kit" key={titulo}>
+                  {titulo}
+                  <span>{texto}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ---------------- FN Club ---------------- */}
         <section className="secao" id="parceiros">
           <div className="env club">
@@ -526,6 +584,7 @@ export default function App() {
                 <li><a href={WHATSAPP} target="_blank" rel="noopener">{TELEFONE_EXIBIDO}</a></li>
                 {/* Única repetição do sistema na página, e em texto — não outro botão. */}
                 <li><a href={SISTEMA} target="_blank" rel="noopener">Acessar o Sistema FN</a></li>
+                <li><a href={LOJA}>Loja Recomendada FN</a></li>
               </ul>
             </div>
 
