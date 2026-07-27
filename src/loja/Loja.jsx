@@ -576,6 +576,9 @@ export default function Loja() {
                 <li><a href="/loja/transparencia/">Política de afiliados</a></li>
                 <li><a href="/loja/transparencia/#privacidade">Privacidade e LGPD</a></li>
                 <li><a href="/loja/transparencia/#cookies">Cookies</a></li>
+                {/* Analista de rede de afiliados procura exatamente por isto no rodapé
+                    antes de aprovar um credenciamento. Discreto, mas presente. */}
+                <li><a href="/loja/parceiros/">Para anunciantes</a></li>
                 <li><a href={SITE}>Site da FN Edificações</a></li>
               </ul>
             </div>

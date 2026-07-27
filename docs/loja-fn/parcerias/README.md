@@ -9,7 +9,13 @@ diante é copiar e colar.
 | **README.md** (este) | O mapa: onde se cadastra cada um e o que esperar |
 | [perfil-publisher.md](perfil-publisher.md) | Os textos de apresentação da FN, prontos para colar nos formulários e e-mails |
 | [emails.md](emails.md) | Modelos de e-mail para gerente de programa e para pedir comissão diferenciada |
+| [media-kit.html](media-kit.html) | O media kit para anexar em e-mail. Preencha o bloco `DADOS` no topo do arquivo, abra no navegador e use `Ctrl+P` → Salvar como PDF |
 | [controle.md](controle.md) | Tabela para acompanhar o status de cada credenciamento |
+
+Além destes, existe a página pública **`fnedificacoes.com.br/loja/parceiros/`** — o link para
+mandar no corpo do e-mail, com o perfil da FN como publisher. Ela não traz número variável de
+propósito: tráfego e alcance vão no media kit, que é atualizado a cada envio, em vez de cravados
+em uma página que envelhece sozinha.
 
 ---
 

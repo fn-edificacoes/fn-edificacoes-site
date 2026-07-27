@@ -20,6 +20,7 @@ export default defineConfig({
         site: pagina("index.html"),
         loja: pagina("loja/index.html"),
         transparencia: pagina("loja/transparencia/index.html"),
+        parceiros: pagina("loja/parceiros/index.html"),
       },
     },
   },
