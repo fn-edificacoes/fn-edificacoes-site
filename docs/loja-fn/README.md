@@ -32,6 +32,7 @@ Edificações, com a vitrine já implementada neste repositório.
 | 12 | [Fosso competitivo](12-fosso-competitivo.md) | Os 7 fossos, as 6 apostas grandes e o que não fazer |
 | — | [Documento executivo final](13-documento-executivo.md) | Roadmap, organograma, KPIs, expansão, licenciamento, conclusão |
 | — | [Integração com o Sistema FN](integracao-sistema.md) | Contratos, endpoints e schema para os repositórios do Sistema |
+| — | [**Kit de credenciamento nos marketplaces**](parcerias/README.md) | Material pronto para se cadastrar e falar com os grandes varejistas |
 
 ## Documentos gerados a partir do código
 
