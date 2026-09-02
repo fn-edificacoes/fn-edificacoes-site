@@ -175,9 +175,45 @@ const API = import.meta.env.VITE_API_URL || "https://sistema.fnedificacoes.com.b
    Sem foto, o cartão aparece só com o texto. */
 const DEPOIMENTOS_RECEBIDOS = [
   {
+    nome: "Patrícia M.",
+    empreendimento: "Vila das Palmeiras",
+    texto: "Gostaria de fazer um adendo para o profissional Felipe Neves. Na nossa vistoria, o profissional que havíamos contratado anteriormente não compareceu: primeiro atrasaria 20 minutos, depois o atraso virou 1h20 — ou seja, nos deixou na mão, mesmo com o pagamento antecipado de 50%. Graças à Gaby, engenheira da VL que acompanha as vistorias, que ao ver nosso desespero nos indicou a FN Edificações. Mesmo com o prazo estourado, com toda a paciência e atenção do mundo, realizou com maestria a nossa vistoria. E identificou vários pontos para ajuste, foram tantos pontos vermelhos, kkkk. Fica aqui, além do meu agradecimento, minha sugestão ao profissional competente.",
+    foto: null,
+  },
+  {
     nome: "Bárbara D.",
     empreendimento: "Real Palace",
     texto: "Acabei de terminar a vistoria com a FN Edificações. Foram ótimas! Eu sou muito emocionada, e aconselho contratarem um profissional como a FN Edificações. Teve alguns probleminhas, e graças a Deus e à FN Edificações esses problemas foram notados.",
+    foto: null,
+  },
+  {
+    nome: "Aryane P.",
+    empreendimento: "Vila das Palmeiras",
+    texto: "Hoje foi nossa vistoria com o Felipe e ele é top! Super detalhista e competente. Contratem sem medo, adorei o serviço dele.",
+    foto: null,
+  },
+  {
+    nome: "Fabyanne M.",
+    empreendimento: "Administração — Vila das Palmeiras",
+    texto: "Felipe segue sendo o melhor como profissional e como pessoa. Obrigada pelo feedback.",
+    foto: null,
+  },
+  {
+    nome: "José Rodrigo",
+    empreendimento: "Vila das Palmeiras",
+    texto: "Também super indico o Felipe. Profissional muito bom de serviço.",
+    foto: null,
+  },
+  {
+    nome: "Moradora do condomínio",
+    empreendimento: "Vila das Palmeiras",
+    texto: "Vim compartilhar minha experiência de hoje na vistoria com a FN Edificações. Que profissional bom: tira suas dúvidas em tudo, começa explicando como funciona e para que serve, não deixa dúvida nenhuma, detalhista, faz as medições de tudo. Ele conseguiu achar falhas na pintura, no acabamento, na cerâmica de dois quartos e, principalmente, no banheiro — viu o desnivelamento da parede do box e o desnivelamento da cerâmica, onde a água iria ficar empoçada. Ele está de parabéns, e quem fizer com ele não vai se arrepender. Profissional ímpar.",
+    foto: null,
+  },
+  {
+    nome: "Cliente de entrega de chaves",
+    empreendimento: null,
+    texto: "Brigadão por hoje! Prazerzão conhecer você e seu trabalho impecável. Deixou essa reta final bem mais tranquila e leve, hehehe. Gratidão demais!",
     foto: null,
   },
 ];
