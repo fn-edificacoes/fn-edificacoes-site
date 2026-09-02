@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /* ============================================================================
    Site institucional da FN Edificações.
@@ -28,8 +28,9 @@ const NAVEGACAO = [
   ["#como-funciona", "Como funciona"],
   ["#entregas", "Entregas"],
   ["#vistorias", "A vistoria"],
-  ["#parceiros", "FN Club"],
+  ["#depoimentos", "Depoimentos"],
   ["#duvidas", "Dúvidas"],
+  ["#parceiros", "FN Club"],
   ["#contato", "Contato"],
 ];
 
@@ -143,6 +144,122 @@ const VIDEOS_CLIENTES = [
   ["cliente-01", "Entrega de chaves"],
   ["cliente-02", "Entrega de chaves"],
 ];
+
+/* Depoimentos reais, vindos do sistema.
+
+   Não há texto escrito por nós aqui: só avaliações que o cliente enviou pelo próprio
+   sistema, com CPF conferido, e que o Atendimento aprovou para aparecer. Se não houver
+   nenhuma aprovada, a seção some — vitrine vazia comunica o contrário do que pretende.
+
+   A rota é pública e não pede login: devolve apenas o que já foi liberado para exibição. */
+/* Endereço da API. O sistema saiu do Render e passou a rodar no servidor da própria FN, no
+   mesmo domínio de sistema.fnedificacoes.com.br — e este endereço aqui ficou para trás: o
+   antigo responde 503, o fetch falhava e a seção de depoimentos sumia da home sem avisar
+   ninguém. Ficou invisível da migração (28/08/2026) até alguém reparar.
+   VITE_API_URL sobrescreve quando for preciso apontar para outro lugar (homologação, API
+   local) sem editar este arquivo. */
+const API = import.meta.env.VITE_API_URL || "https://sistema.fnedificacoes.com.br";
+
+/* ---------- Depoimentos que chegam fora do sistema ----------
+   A avaliação do sistema é a fonte mais forte (vem do cliente identificado, com CPF conferido
+   e liberada pelo Atendimento), mas ela só existe para quem clica no link do e-mail. Uma boa
+   parte do retorno chega por WhatsApp, no grupo do prédio, logo depois da entrega — e é ali
+   que o cliente escreve solto, do jeito que convence quem está decidindo contratar.
+
+   Para incluir um depoimento novo: copie o texto como o cliente escreveu (sem "melhorar"),
+   preencha nome e empreendimento e adicione ao final da lista. Só entra aqui o que o cliente
+   autorizou a publicar — nome e imagem de pessoa são dados dela, não nossos.
+
+   "foto" é opcional e recebe o nome do arquivo em public/img, sem o tamanho e sem a extensão
+   (o mesmo padrão do componente Foto): "cliente-real-palace" carrega cliente-real-palace-800.webp.
+   Sem foto, o cartão aparece só com o texto. */
+const DEPOIMENTOS_RECEBIDOS = [
+  {
+    nome: "Bárbara D.",
+    empreendimento: "Real Palace",
+    texto: "Acabei de terminar a vistoria com a FN Edificações. Foram ótimas! Eu sou muito emocionada, e aconselho contratarem um profissional como a FN Edificações. Teve alguns probleminhas, e graças a Deus e à FN Edificações esses problemas foram notados.",
+    foto: null,
+  },
+];
+
+function EstrelasFixas({ nota }) {
+  return (
+    <span className="estrelas" aria-label={`Nota ${nota} de 5`}>
+      {"★★★★★".slice(0, nota)}
+      <span className="estrelas__vazias">{"★★★★★".slice(nota)}</span>
+    </span>
+  );
+}
+
+function Depoimentos() {
+  const [avaliacoes, setAvaliacoes] = useState(null);
+
+  useEffect(() => {
+    let vivo = true;
+    fetch(`${API}/api/avaliacoes/vitrine`)
+      .then((r) => (r.ok ? r.json() : { avaliacoes: [] }))
+      .then((d) => { if (vivo) setAvaliacoes(d.avaliacoes || []); })
+      // Site fora do ar por causa de uma avaliação seria péssimo negócio: em qualquer
+      // falha a seção simplesmente não aparece.
+      .catch(() => { if (vivo) setAvaliacoes([]); });
+    return () => { vivo = false; };
+  }, []);
+
+  /* Enquanto a API não responde, avaliacoes é null — mas os depoimentos recebidos por
+     WhatsApp já estão aqui e não dependem de rede nenhuma. A seção só some quando não há
+     absolutamente nada para mostrar: vitrine vazia comunica o contrário do que pretende. */
+  const daApi = avaliacoes || [];
+  if (daApi.length === 0 && DEPOIMENTOS_RECEBIDOS.length === 0) return null;
+
+  const media = daApi.length
+    ? (daApi.reduce((s, a) => s + Number(a.nota || 0), 0) / daApi.length).toFixed(1)
+    : null;
+
+  return (
+    <section className="secao secao--alt" id="depoimentos">
+      <div className="env">
+        <div className="secao__intro">
+          <p className="olho">Quem já foi atendido</p>
+          <h2>O que os clientes dizem.</h2>
+          <p>
+            O que os clientes escreveram depois da entrega das chaves — pelo sistema da FN, ao
+            final do atendimento, e nas mensagens que eles mandam no dia da vistoria.
+            {media && (
+              <> Média de <strong>{media}</strong> em {daApi.length} avaliação(ões) no sistema.</>
+            )}
+          </p>
+        </div>
+
+        <div className="depoimentos">
+          {daApi.map((a, i) => (
+            <figure className="depoimento" key={`api-${i}`}>
+              <EstrelasFixas nota={Number(a.nota) || 0} />
+              {a.comentario && <blockquote>{a.comentario}</blockquote>}
+              <figcaption>
+                <strong>{a.cliente}</strong>
+                {a.empreendimento && <span>{a.empreendimento}</span>}
+              </figcaption>
+            </figure>
+          ))}
+
+          {DEPOIMENTOS_RECEBIDOS.map((d, i) => (
+            <figure className="depoimento" key={`recebido-${i}`}>
+              {d.foto && (
+                <Foto nome={d.foto} alt={`Cliente da FN Edificações no dia da vistoria`} className="depoimento__foto" />
+              )}
+              <blockquote>{d.texto}</blockquote>
+              <figcaption>
+                <strong>{d.nome}</strong>
+                {d.empreendimento && <span>{d.empreendimento}</span>}
+                <span className="depoimento__origem">Mensagem enviada à equipe</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Carrossel({ children, rotulo }) {
   const trilho = useRef(null);
@@ -381,37 +498,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- FN Club ---------------- */}
-        <section className="secao" id="parceiros">
-          <div className="env club">
-            <div>
-              <p className="olho">FN Club</p>
-              <h2>Depois das chaves, você não fica sozinho.</h2>
-              <p style={{ color: "var(--tinta-media)", marginTop: 12 }}>
-                O FN Club reúne prestadores e fornecedores com condições especiais para quem
-                foi atendido pela FN. Cada parceiro atua sob responsabilidade própria,
-                conforme o serviço contratado.
-              </p>
-              {/* A vitrine de parceiros mora no sistema, que é onde o cadastro, a aprovação
-                  e os cupons acontecem. O site antigo tinha um diretório próprio que
-                  mostrava "0 parceiro(s)" — não vale recriar uma segunda lista vazia. */}
-              <a className="btn btn--contorno-escuro" style={{ marginTop: 24 }}
-                href={SISTEMA} target="_blank" rel="noopener">
-                Ver parceiros e benefícios
-              </a>
-            </div>
-
-            <div className="club__lista">
-              {CLUB.map(([titulo, texto]) => (
-                <div className="club__item" key={titulo}>
-                  {titulo}
-                  <span>{texto}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ---------------- Entregas realizadas ---------------- */}
         <section className="secao" id="entregas">
           <div className="env">
@@ -454,7 +540,7 @@ export default function App() {
         </section>
 
         {/* ---------------- Clientes recebendo ---------------- */}
-        <section className="secao" id="depoimentos">
+        <section className="secao" id="momento">
           <div className="env">
             <div className="secao__intro">
               <p className="olho">O momento da chave</p>
@@ -468,6 +554,8 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        <Depoimentos />
 
         {/* ---------------- Dúvidas ---------------- */}
         <section className="secao secao--alt" id="duvidas">
@@ -483,6 +571,37 @@ export default function App() {
                   <summary>{pergunta}</summary>
                   <p>{resposta}</p>
                 </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- FN Club ---------------- */}
+        <section className="secao" id="parceiros">
+          <div className="env club">
+            <div>
+              <p className="olho">FN Club</p>
+              <h2>Depois das chaves, você não fica sozinho.</h2>
+              <p style={{ color: "var(--tinta-media)", marginTop: 12 }}>
+                O FN Club reúne prestadores e fornecedores com condições especiais para quem
+                foi atendido pela FN. Cada parceiro atua sob responsabilidade própria,
+                conforme o serviço contratado.
+              </p>
+              {/* A vitrine de parceiros mora no sistema, que é onde o cadastro, a aprovação
+                  e os cupons acontecem. O site antigo tinha um diretório próprio que
+                  mostrava "0 parceiro(s)" — não vale recriar uma segunda lista vazia. */}
+              <a className="btn btn--contorno-escuro" style={{ marginTop: 24 }}
+                href={SISTEMA} target="_blank" rel="noopener">
+                Ver parceiros e benefícios
+              </a>
+            </div>
+
+            <div className="club__lista">
+              {CLUB.map(([titulo, texto]) => (
+                <div className="club__item" key={titulo}>
+                  {titulo}
+                  <span>{texto}</span>
+                </div>
               ))}
             </div>
           </div>
