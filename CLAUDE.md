@@ -2,7 +2,15 @@
 
 Site público da FN Edificações, em **fnedificacoes.com.br**. É a vitrine: explica os
 serviços, mostra as entregas de chaves e manda quem é cliente, equipe ou parceiro para o
-sistema. Não tem login, não tem banco e não conversa com a API — quem faz isso é o sistema.
+sistema. Não tem login nem banco.
+
+**Conversa com a API em um ponto só**, e vale saber qual: a seção de depoimentos busca
+`/api/avaliacoes/vitrine` (rota pública, sem token, que devolve só o que o Atendimento
+aprovou para aparecer). Se a chamada falhar, a seção se esconde em vez de quebrar o site —
+o que é bom para o visitante e traiçoeiro para quem mantém: quando a API mudou de endereço
+na migração de 28/08/2026, os depoimentos sumiram da home e ninguém percebeu por uma
+semana, porque não havia erro em lugar nenhum. Ao mexer no endereço da API, **abra a home e
+confira se a seção aparece.**
 
 ## Onde este repositório fica no todo
 
@@ -12,7 +20,7 @@ São três repositórios, todos em `github.com/fn-edificacoes`:
 |---|---|---|
 | `fn-edificacoes-site` | **este aqui** — site institucional | fnedificacoes.com.br |
 | `fn-edificacoes-frontend` | o sistema (laudos, clientes, parceiros) | sistema.fnedificacoes.com.br |
-| `fn-edificacoes-backend` | a API do sistema | Render + Postgres no Supabase |
+| `fn-edificacoes-backend` | a API do sistema **e o banco** | servidor próprio da FN (VPS) |
 
 Uma tarefa que atravessa os três (por exemplo, mexer no caminho do parceiro) precisa dos
 três anexados na sessão. Cada um tem o seu `CLAUDE.md`.
