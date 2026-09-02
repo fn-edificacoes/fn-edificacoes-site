@@ -126,7 +126,11 @@ const DUVIDAS = [
 /* Fotos das entregas de chaves. São registros reais dos atendimentos — sem legenda
    inventada e sem nota: a avaliação de verdade vem dos clientes, pelo sistema, e
    aparece na seção de depoimentos quando o Atendimento aprova. */
-const ENTREGAS = Array.from({ length: 24 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
+/* As peças da galeria de entregas. Vêm prontas do Instagram (card de feed, story), cada uma
+   com uma proporção — por isso o carrossel alinha pela altura e deixa a largura seguir a
+   imagem, em vez de recortar todas num quadro fixo: recorte comeria o logo em cima e o
+   telefone embaixo, que é justamente o que a peça quer mostrar. */
+const ENTREGAS = Array.from({ length: 31 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
 const VISTORIAS = Array.from({ length: 9 }, (_, i) => `vistoria-${String(i + 1).padStart(2, "0")}`);
 
 /* Vídeos curtos. Os de vistoria e defeito são mudos de propósito — som que dispara
@@ -327,7 +331,7 @@ function LinhaDeFotos({ nomes, pasta, descricao, rotulo }) {
           <img
             src={`/img/${pasta}/${nome}-540.webp`}
             srcSet={`/img/${pasta}/${nome}-320.webp 320w, /img/${pasta}/${nome}-540.webp 540w, /img/${pasta}/${nome}-1080.webp 1080w`}
-            sizes="(max-width: 700px) 70vw, 340px"
+            sizes="420px"
             alt={`${descricao} (${i + 1} de ${nomes.length})`}
             loading={i < 3 ? "eager" : "lazy"} decoding="async"
           />
@@ -543,8 +547,8 @@ export default function App() {
               <p className="olho">Entregas realizadas</p>
               <h2>O dia da chave é o que a gente protege.</h2>
               <p>
-                Cada foto é uma vistoria concluída antes do aceite — o cliente recebendo
-                o imóvel com o laudo em mãos e as pendências registradas.
+                Cada peça é uma vistoria concluída antes do aceite — o cliente recebendo o
+                imóvel com o laudo em mãos e as pendências registradas.
               </p>
             </div>
           </div>

@@ -313,14 +313,18 @@ p { margin: 0; text-wrap: pretty; }
 .galeria__trilho::-webkit-scrollbar { height: 8px; }
 .galeria__trilho::-webkit-scrollbar-thumb { background: var(--linha); border-radius: 99px; }
 
+/* Altura fixa, largura livre: as peças chegam do Instagram em proporções diferentes (1:1 de
+   feed, 4:5, 9:16 de story) e o carrossel precisa de um alinhamento comum. Alinhar pela
+   altura padroniza a fileira sem recortar nada — a alternativa, um quadro 3:4 com
+   object-fit: cover, cortava o logo em cima e o telefone embaixo de cada card. */
 .entrega {
-  margin: 0; flex: 0 0 auto; width: 340px; scroll-snap-align: start;
+  margin: 0; flex: 0 0 auto; scroll-snap-align: start;
   border-radius: 14px; overflow: hidden; background: var(--fundo-alt);
   border: 1px solid var(--linha);
 }
-.entrega img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; }
+.entrega img { height: 420px; width: auto; display: block; }
 
-@media (max-width: 700px) { .entrega { width: 70vw; max-width: 300px; } }
+@media (max-width: 700px) { .entrega img { height: 300px; } }
 
 .galeria__seta {
   position: absolute; top: calc(50% - 22px); width: 44px; height: 44px; border-radius: 50%;
