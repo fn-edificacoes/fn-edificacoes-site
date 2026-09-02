@@ -1,0 +1,47 @@
+[
+  {
+    "nome": "vistoria-01",
+    "largura": 576,
+    "altura": 1008
+  },
+  {
+    "nome": "vistoria-02",
+    "largura": 960,
+    "altura": 1280
+  },
+  {
+    "nome": "vistoria-03",
+    "largura": 960,
+    "altura": 1280
+  },
+  {
+    "nome": "vistoria-04",
+    "largura": 576,
+    "altura": 1002
+  },
+  {
+    "nome": "vistoria-05",
+    "largura": 576,
+    "altura": 1011
+  },
+  {
+    "nome": "vistoria-06",
+    "largura": 576,
+    "altura": 1012
+  },
+  {
+    "nome": "vistoria-07",
+    "largura": 576,
+    "altura": 1003
+  },
+  {
+    "nome": "vistoria-08",
+    "largura": 576,
+    "altura": 1010
+  },
+  {
+    "nome": "vistoria-09",
+    "largura": 722,
+    "altura": 1280
+  }
+]

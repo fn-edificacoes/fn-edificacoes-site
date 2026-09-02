@@ -126,12 +126,17 @@ const DUVIDAS = [
 /* Fotos das entregas de chaves. São registros reais dos atendimentos — sem legenda
    inventada e sem nota: a avaliação de verdade vem dos clientes, pelo sistema, e
    aparece na seção de depoimentos quando o Atendimento aprova. */
-/* As peças da galeria de entregas. Vêm prontas do Instagram (card de feed, story), cada uma
-   com uma proporção — por isso o carrossel alinha pela altura e deixa a largura seguir a
-   imagem, em vez de recortar todas num quadro fixo: recorte comeria o logo em cima e o
-   telefone embaixo, que é justamente o que a peça quer mostrar. */
-const ENTREGAS = Array.from({ length: 31 }, (_, i) => `entrega-${String(i + 1).padStart(2, "0")}`);
-const VISTORIAS = Array.from({ length: 9 }, (_, i) => `vistoria-${String(i + 1).padStart(2, "0")}`);
+/* As peças da galeria vêm prontas do Instagram (card de feed, story), cada uma com uma
+   proporção — por isso o carrossel alinha pela altura e deixa a largura seguir a imagem, em
+   vez de recortar todas num quadro fixo: recorte comeria o logo em cima e o telefone
+   embaixo, que é justamente o que a peça quer mostrar.
+
+   A lista, com a dimensão de cada arquivo, é gerada por "npm run otimizar-imagens" — não se
+   edita à mão. A dimensão importa: sem ela o navegador só descobre a largura quando a
+   imagem termina de baixar, e as que carregam preguiçosamente ficam com largura zero até
+   lá, empilhadas no começo da fileira. */
+import ENTREGAS from "./dados/entregas.json";
+import VISTORIAS from "./dados/vistorias.json";
 
 /* Vídeos curtos. Os de vistoria e defeito são mudos de propósito — som que dispara
    sozinho faz o visitante fechar a aba, e ali o que importa é a imagem. Nos de cliente
@@ -326,17 +331,26 @@ function Carrossel({ children, rotulo }) {
 function LinhaDeFotos({ nomes, pasta, descricao, rotulo }) {
   return (
     <Carrossel rotulo={rotulo}>
-      {nomes.map((nome, i) => (
-        <figure className="entrega" key={nome}>
-          <img
-            src={`/img/${pasta}/${nome}-540.webp`}
-            srcSet={`/img/${pasta}/${nome}-320.webp 320w, /img/${pasta}/${nome}-540.webp 540w, /img/${pasta}/${nome}-1080.webp 1080w`}
-            sizes="420px"
-            alt={`${descricao} (${i + 1} de ${nomes.length})`}
-            loading={i < 3 ? "eager" : "lazy"} decoding="async"
-          />
-        </figure>
-      ))}
+      {nomes.map((peca, i) => {
+        /* Aceita tanto o manifesto ({ nome, largura, altura }) quanto um nome solto, para uma
+           galeria nova poder começar sem manifesto. Sem a dimensão o cartão volta ao antigo
+           recorte 3:4, que é feio mas não quebra a fileira. */
+        const nome = typeof peca === "string" ? peca : peca.nome;
+        const proporcao = peca.largura && peca.altura ? peca.largura / peca.altura : null;
+        return (
+          <figure className="entrega" key={nome}>
+            <img
+              src={`/img/${pasta}/${nome}-540.webp`}
+              srcSet={`/img/${pasta}/${nome}-320.webp 320w, /img/${pasta}/${nome}-540.webp 540w, /img/${pasta}/${nome}-1080.webp 1080w`}
+              sizes="420px"
+              width={peca.largura} height={peca.altura}
+              style={proporcao ? { aspectRatio: String(proporcao) } : undefined}
+              alt={`${descricao} (${i + 1} de ${nomes.length})`}
+              loading={i < 3 ? "eager" : "lazy"} decoding="async"
+            />
+          </figure>
+        );
+      })}
     </Carrossel>
   );
 }

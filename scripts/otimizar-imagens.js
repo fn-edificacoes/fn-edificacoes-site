@@ -28,7 +28,7 @@
 
    No fim ele imprime a lista de nomes pronta para colar na constante do App.jsx. */
 import sharp from "sharp";
-import { readdirSync, mkdirSync, statSync, existsSync } from "node:fs";
+import { readdirSync, mkdirSync, statSync, existsSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const ORIGEM = "assets-originais";  // fora de public/: os originais pesam 5 MB e não vão para o ar
@@ -50,7 +50,16 @@ mkdirSync(DESTINO, { recursive: true });
 
 let antes = 0, depois = 0, pulados = 0;
 
+/* Proporção de cada peça, gravada num manifesto que o App importa.
+   Sem isso o carrossel pula: com altura fixa e largura automática, o navegador só descobre
+   a largura quando a imagem termina de baixar — e as que carregam preguiçosamente ficam com
+   largura zero até lá, empilhadas no começo da fileira. Com a proporção em mãos ele reserva
+   o espaço certo antes de ter o arquivo. */
+const dimensoes = {};
+
 async function converter(entrada, destino, base, larguras) {
+  const { width, height } = await sharp(entrada).metadata();
+  dimensoes[base] = { largura: width, altura: height };
   const jaExiste = larguras.every((l) => existsSync(path.join(destino, `${base}-${l}.webp`)));
   if (jaExiste) { pulados += 1; return false; }
   antes += statSync(entrada).size;
@@ -101,6 +110,23 @@ for (const pasta of itens.filter((i) => i.isDirectory())) {
     proximo += 1;
   }
   listas[pasta.name] = { prefixo, total: proximo - 1 };
+
+  /* O manifesto descreve o que está PUBLICADO, não o que rodou agora: numa rodada em que
+     nada é novo, converter() nem é chamado, e um manifesto montado só com o que passou por
+     ali sairia vazio. Por isso a dimensão é lida da pasta inteira, na mesma ordem que gerou
+     os nomes — ler o cabeçalho de um JPEG é barato, não relê a imagem toda. */
+  const manifesto = [];
+  for (let i = 0; i < originais.length; i++) {
+    const nome = `${prefixo}-${String(i + 1).padStart(2, "0")}`;
+    const { width, height } = await sharp(path.join(origem, originais[i])).metadata();
+    if (width && height) manifesto.push({ nome, largura: width, altura: height });
+  }
+  if (manifesto.length) {
+    const arquivo = path.join("src", "dados", `${pasta.name}.json`);
+    mkdirSync(path.dirname(arquivo), { recursive: true });
+    writeFileSync(arquivo, `${JSON.stringify(manifesto, null, 2)}\n`, "utf8");
+    console.log(`manifesto: ${arquivo} (${manifesto.length} peça(s))`);
+  }
 }
 
 console.log(`\nOriginais processadas: ${(antes / 1024 / 1024).toFixed(2)} MB`);
