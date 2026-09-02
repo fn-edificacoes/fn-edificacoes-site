@@ -372,3 +372,29 @@ p { margin: 0; text-wrap: pretty; }
   font-size: .86rem; color: var(--tinta-media); margin-top: 8px;
 }
 .videocard__mudo { color: var(--tinta-fraca); }
+
+/* ---------- Depoimentos reais ---------- */
+.depoimentos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .depoimentos { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .depoimentos { grid-template-columns: 1fr; } }
+
+.depoimento {
+  margin: 0; background: #fff; border: 1px solid var(--linha);
+  border-radius: var(--raio); padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.estrelas { color: #E8A317; font-size: 1.05rem; letter-spacing: 2px; }
+.estrelas__vazias { color: var(--linha); }
+.depoimento blockquote {
+  margin: 0; font-size: .98rem; color: var(--tinta); line-height: 1.6;
+}
+.depoimento blockquote::before { content: "“"; }
+.depoimento blockquote::after { content: "”"; }
+.depoimento figcaption { margin-top: auto; font-size: .84rem; }
+.depoimento figcaption strong { display: block; color: var(--azul-marinho); }
+.depoimento figcaption span { color: var(--tinta-fraca); }
+/* Foto do dia da vistoria, quando o cliente autoriza publicar. Altura fixa para os cartões
+   da grade não ficarem de tamanhos diferentes por causa de uma foto mais alta. */
+.depoimento__foto { width: 100%; height: 190px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
+/* Diz de onde veio o depoimento sem competir com o nome do cliente. */
+.depoimento__origem { display: block; margin-top: 4px; font-size: .76rem; opacity: .75; }
