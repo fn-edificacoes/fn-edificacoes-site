@@ -167,7 +167,9 @@ const API = import.meta.env.VITE_API_URL || "https://sistema.fnedificacoes.com.b
    que o cliente escreve solto, do jeito que convence quem está decidindo contratar.
 
    Para incluir um depoimento novo: copie o texto como o cliente escreveu (sem "melhorar"),
-   preencha nome e empreendimento e adicione ao final da lista. Só entra aqui o que o cliente
+   preencha nome e sobrenome como no contato, o empreendimento, e adicione ao final da lista.
+   Atenção ao que parece sobrenome e não é: nos grupos de prédio o contato costuma vir como
+   "Fulano de Tal PALMEIRAS", e esse final é o nome do condomínio. Só entra aqui o que o cliente
    autorizou a publicar — nome e imagem de pessoa são dados dela, não nossos.
 
    "foto" é opcional e recebe o nome do arquivo em public/img, sem o tamanho e sem a extensão
@@ -175,25 +177,25 @@ const API = import.meta.env.VITE_API_URL || "https://sistema.fnedificacoes.com.b
    Sem foto, o cartão aparece só com o texto. */
 const DEPOIMENTOS_RECEBIDOS = [
   {
-    nome: "Patrícia M.",
+    nome: "Patrícia",
     empreendimento: "Vila das Palmeiras",
     texto: "Gostaria de fazer um adendo para o profissional Felipe Neves. Na nossa vistoria, o profissional que havíamos contratado anteriormente não compareceu: primeiro atrasaria 20 minutos, depois o atraso virou 1h20 — ou seja, nos deixou na mão, mesmo com o pagamento antecipado de 50%. Graças à Gaby, engenheira da VL que acompanha as vistorias, que ao ver nosso desespero nos indicou a FN Edificações. Mesmo com o prazo estourado, com toda a paciência e atenção do mundo, realizou com maestria a nossa vistoria. E identificou vários pontos para ajuste, foram tantos pontos vermelhos, kkkk. Fica aqui, além do meu agradecimento, minha sugestão ao profissional competente.",
     foto: null,
   },
   {
-    nome: "Bárbara D.",
+    nome: "Bárbara Dias",
     empreendimento: "Real Palace",
     texto: "Acabei de terminar a vistoria com a FN Edificações. Foram ótimas! Eu sou muito emocionada, e aconselho contratarem um profissional como a FN Edificações. Teve alguns probleminhas, e graças a Deus e à FN Edificações esses problemas foram notados.",
     foto: null,
   },
   {
-    nome: "Aryane P.",
+    nome: "Aryane",
     empreendimento: "Vila das Palmeiras",
     texto: "Hoje foi nossa vistoria com o Felipe e ele é top! Super detalhista e competente. Contratem sem medo, adorei o serviço dele.",
     foto: null,
   },
   {
-    nome: "Fabyanne M.",
+    nome: "Fabyanne Montenegro",
     empreendimento: "Administração — Vila das Palmeiras",
     texto: "Felipe segue sendo o melhor como profissional e como pessoa. Obrigada pelo feedback.",
     foto: null,
