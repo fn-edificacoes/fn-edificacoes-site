@@ -74,6 +74,10 @@ cidade a cidade e parceiros ficam só no sistema. Atenção: o hero diz "+1.000 
 indicador mostra o que está no sistema (cadastrado ou importado) — se a base antiga não for
 importada, os dois números podem não bater na mesma página.
 
+Os números são **da base real** do sistema, nunca escritos aqui. Sem nenhum cliente posicionado
+no mapa (ex.: logo depois de publicar, antes de os empreendimentos ganharem cidade e regional
+no sistema), a seção não aparece — "0 clientes atendidos" na home seria pior que nada.
+
 **Não está no menu do topo**: com nove itens o cabeçalho passa da largura no computador e a
 página ganha rolagem lateral. O link fica no rodapé.
 

@@ -43,7 +43,10 @@ export default function OndeAtuamos({ api }) {
     let vivo = true;
     const carregar = () => fetch(`${api}/api/nacional/mapa-publico`)
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (vivo) setDados(d && d.regionais?.length ? d : false); })
+      /* Sem nenhum cliente posicionado no mapa (logo depois de publicar, enquanto os
+         empreendimentos ainda não têm cidade e regional no sistema), a seção não aparece:
+         "0 clientes atendidos" na home seria pior do que não mostrar nada. */
+      .then((d) => { if (vivo) setDados(d && d.regionais?.length && d.totais?.clientes > 0 ? d : false); })
       .catch(() => { if (vivo) setDados((atual) => atual || false); });
     carregar();
     const t = setInterval(() => { if (document.visibilityState === "visible") carregar(); }, ATUALIZAR_A_CADA_MS);
