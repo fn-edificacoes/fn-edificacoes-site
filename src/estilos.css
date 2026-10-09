@@ -431,3 +431,11 @@ p { margin: 0; text-wrap: pretty; }
 .atuacao__zoom { position: absolute; top: 12px; left: 12px; z-index: 1; font: inherit; font-size: .82rem; font-weight: 600; color: var(--azul-marinho); background: var(--fundo); border: 1px solid var(--linha); border-radius: 999px; padding: 6px 12px; cursor: pointer; box-shadow: var(--sombra); }
 .atuacao__zoom:hover { border-color: var(--azul-medio); }
 .atuacao__zoom:focus-visible { outline: 2px solid var(--azul-medio); outline-offset: 2px; }
+.atuacao__numeros { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 10px; margin-top: 24px; }
+.atuacao__numero { border: 1px solid var(--linha); border-radius: var(--raio); padding: 12px 14px; background: var(--fundo-alt); display: grid; gap: 2px; }
+.atuacao__numero strong { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); line-height: 1.1; color: var(--azul-marinho); font-variant-numeric: tabular-nums; }
+.atuacao__numero span { color: var(--tinta-media); font-size: .88rem; }
+.atuacao__numero--destaque { background: var(--azul-marinho); border-color: var(--azul-marinho); }
+.atuacao__numero--destaque strong { color: #fff; }
+.atuacao__numero--destaque span { color: rgba(255, 255, 255, .78); }
+@media (max-width: 420px) { .atuacao__numeros { grid-template-columns: 1fr 1fr; } .atuacao__numero--destaque { grid-column: 1 / -1; } }

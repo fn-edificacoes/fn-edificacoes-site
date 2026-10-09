@@ -68,10 +68,11 @@ Ligar outra lá faz ela aparecer aqui **sem mexer no site**: a seção baixa o d
 que a API mandar, de `public/mapas/uf-XX.json`. Os 27 estados já estão gerados, todos na mesma
 projeção (é isso que encaixa PE e PB lado a lado); refazer com `node scripts/gerar-mapas.cjs`.
 
-O que vai a público é pouco de propósito: cidade atendida, intensidade em nível 1–5 e
-quantidade de empreendimentos. Clientes por cidade e parceiros ficam só no sistema. Também não
-há total de clientes: o hero já diz "+1.000 imóveis", e o número do sistema (só o que foi
-cadastrado ou importado nele) apareceria menor na mesma página.
+O que vai a público é pouco de propósito: **clientes atendidos** (total e por estado, contados
+por pessoa/CPF), cidades, empreendimentos e a intensidade de cada cidade em nível 1–5. Clientes
+cidade a cidade e parceiros ficam só no sistema. Atenção: o hero diz "+1.000 imóveis" e o
+indicador mostra o que está no sistema (cadastrado ou importado) — se a base antiga não for
+importada, os dois números podem não bater na mesma página.
 
 **Não está no menu do topo**: com nove itens o cabeçalho passa da largura no computador e a
 página ganha rolagem lateral. O link fica no rodapé.

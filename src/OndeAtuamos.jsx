@@ -9,9 +9,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
    aparecer aqui sem mexer no site: a seção baixa o desenho de cada estado que a API mandar
    (public/mapas/uf-XX.json, todos na mesma projeção) e enquadra o conjunto.
 
-   O que é público é de propósito pouco: onde a FN atua, a intensidade de cada cidade (nível
-   1 a 5, relativo à mais atendida) e quantos empreendimentos foram atendidos. Quantidade de
-   clientes por cidade e parceiros ficam no sistema, só para a Gerência.
+   O que é público é de propósito pouco: onde a FN atua, quantos clientes foram atendidos (no
+   total e por estado), a intensidade de cada cidade (nível 1 a 5, relativo à mais atendida) e
+   quantos empreendimentos. Clientes cidade a cidade e parceiros ficam no sistema, só para a
+   Gerência.
 
    Mesma postura dos depoimentos: se a API não responder, a seção não aparece — mapa vazio
    comunica o contrário do que pretende.
@@ -123,7 +124,8 @@ export default function OndeAtuamos({ api }) {
 
   const cidadesPorUf = (uf) => (dados.cidades || []).filter((c) => c.uf === uf)
     .sort((a, b) => b.nivel - a.nivel || b.empreendimentos - a.empreendimentos);
-  const empreendimentosDaUf = (uf) => dados.ufs.find((u) => u.uf === uf)?.empreendimentos || 0;
+  const linhaDaUf = (uf) => dados.ufs.find((u) => u.uf === uf) || { clientes: 0, empreendimentos: 0 };
+  const totais = dados.totais || { clientes: 0, empreendimentos: 0, cidades: 0 };
 
   const dicaDaCidade = (m, c) => (
     <>
@@ -147,6 +149,23 @@ export default function OndeAtuamos({ api }) {
             automaticamente com os atendimentos registrados no sistema da FN.
           </p>
 
+          {/* Clientes atendidos é o número que a pessoa procura antes de contratar; vem do
+              sistema, contado por pessoa (CPF), e se atualiza junto com o mapa. */}
+          <div className="atuacao__numeros">
+            <div className="atuacao__numero atuacao__numero--destaque">
+              <strong>{totais.clientes.toLocaleString("pt-BR")}</strong>
+              <span>clientes atendidos</span>
+            </div>
+            <div className="atuacao__numero">
+              <strong>{totais.cidades.toLocaleString("pt-BR")}</strong>
+              <span>{totais.cidades === 1 ? "cidade" : "cidades"}</span>
+            </div>
+            <div className="atuacao__numero">
+              <strong>{totais.empreendimentos.toLocaleString("pt-BR")}</strong>
+              <span>{totais.empreendimentos === 1 ? "empreendimento" : "empreendimentos"}</span>
+            </div>
+          </div>
+
           <div className="atuacao__estados">
             {ufs.map((uf) => {
               const cidades = cidadesPorUf(uf);
@@ -154,9 +173,11 @@ export default function OndeAtuamos({ api }) {
                 <div className="atuacao__estado" key={uf}>
                   <strong>{NOME_UF[uf] || uf}</strong>
                   <span>
-                    {plural(cidades.length, "cidade atendida", "cidades atendidas")}
+                    {plural(linhaDaUf(uf).clientes, "cliente atendido", "clientes atendidos")}
                     {" · "}
-                    {plural(empreendimentosDaUf(uf), "empreendimento", "empreendimentos")}
+                    {plural(cidades.length, "cidade", "cidades")}
+                    {" · "}
+                    {plural(linhaDaUf(uf).empreendimentos, "empreendimento", "empreendimentos")}
                   </span>
                   {cidades.length > 0 && (
                     <span className="atuacao__cidades">{cidades.map((c) => c.cidade).join(", ")}</span>
