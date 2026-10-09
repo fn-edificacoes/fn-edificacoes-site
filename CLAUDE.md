@@ -4,9 +4,10 @@ Site público da FN Edificações, em **fnedificacoes.com.br**. É a vitrine: ex
 serviços, mostra as entregas de chaves e manda quem é cliente, equipe ou parceiro para o
 sistema. Não tem login nem banco.
 
-**Conversa com a API em um ponto só**, e vale saber qual: a seção de depoimentos busca
-`/api/avaliacoes/vitrine` (rota pública, sem token, que devolve só o que o Atendimento
-aprovou para aparecer). Se a chamada falhar, a seção se esconde em vez de quebrar o site —
+**Conversa com a API em dois pontos**, ambos públicos e sem token: a seção de depoimentos
+busca `/api/avaliacoes/vitrine` (só o que o Atendimento aprovou para aparecer) e a seção
+"Onde atuamos" busca `/api/nacional/mapa-publico`. Se a chamada falhar, a seção se esconde
+em vez de quebrar o site —
 o que é bom para o visitante e traiçoeiro para quem mantém: quando a API mudou de endereço
 na migração de 28/08/2026, os depoimentos sumiram da home e ninguém percebeu por uma
 semana, porque não havia erro em lugar nenhum. Ao mexer no endereço da API, **abra a home e
@@ -44,6 +45,8 @@ não há upload manual. O deploy leva cerca de um minuto.
 ```
 index.html          meta tags, SEO e dados estruturados (ProfessionalService)
 src/App.jsx         a página inteira, numa única componente por seção
+src/OndeAtuamos.jsx a seção do mapa (a única em arquivo próprio, pelo tamanho)
+public/mapas/       desenho de cada estado (IBGE) para o mapa, gerado por scripts/gerar-mapas.cjs
 src/estilos.css     todo o CSS, sem framework
 public/img/         imagens já otimizadas em .webp, em 2 ou 3 larguras
 public/video/       vídeos já comprimidos
@@ -56,6 +59,22 @@ As imagens **não** são otimizadas na mão: coloque o original em `assets-origi
 `npm run otimizar-imagens` (ou o script específico da pasta). Os outros scripts —
 `otimizar-entregas`, `otimizar-vistorias`, `otimizar-videos` — são chamados direto com
 `node scripts/<arquivo>.js`.
+
+## Onde atuamos (mapa de calor)
+
+`src/OndeAtuamos.jsx`, logo depois de "Como funciona". Mostra só as regionais que a Gerência
+marcou como **"No site"** no sistema (Rede Nacional → Regionais) — hoje Pernambuco e Paraíba.
+Ligar outra lá faz ela aparecer aqui **sem mexer no site**: a seção baixa o desenho de cada UF
+que a API mandar, de `public/mapas/uf-XX.json`. Os 27 estados já estão gerados, todos na mesma
+projeção (é isso que encaixa PE e PB lado a lado); refazer com `node scripts/gerar-mapas.cjs`.
+
+O que vai a público é pouco de propósito: cidade atendida, intensidade em nível 1–5 e
+quantidade de empreendimentos. Clientes por cidade e parceiros ficam só no sistema. Também não
+há total de clientes: o hero já diz "+1.000 imóveis", e o número do sistema (só o que foi
+cadastrado ou importado nele) apareceria menor na mesma página.
+
+**Não está no menu do topo**: com nove itens o cabeçalho passa da largura no computador e a
+página ganha rolagem lateral. O link fica no rodapé.
 
 ## Rotas de redirecionamento
 
@@ -75,6 +94,6 @@ dessas, e não uma rota de SPA — o Pages não conhece rotas de aplicação.
   em geral registram uma decisão já tomada (por que só existe um botão no cabeçalho, por
   que a avaliação não é inventada). Antes de "melhorar" algo que parece estranho, leia o
   comentário em volta: costuma ser deliberado.
-- Constantes de destino (`SISTEMA`, `WHATSAPP`, `INSTAGRAM`, `TELEFONE_EXIBIDO`) ficam no
-  topo do `App.jsx`. Trocar o telefone ou o link do sistema é mexer só ali.
+- Constantes de destino (`SISTEMA`, `WHATSAPP`, `INSTAGRAM`, `TELEFONE_EXIBIDO`, `CNPJ_EXIBIDO`)
+  ficam no topo do `App.jsx`. Trocar o telefone ou o link do sistema é mexer só ali.
 - Não há testes automatizados. A verificação é `npm run build` e olhar a página.

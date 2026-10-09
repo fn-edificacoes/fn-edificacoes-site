@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import OndeAtuamos from "./OndeAtuamos.jsx";
 
 /* ============================================================================
    Site institucional da FN Edificações.
@@ -22,7 +23,11 @@ const WHATSAPP = "https://wa.me/5581983061305?text=" +
   encodeURIComponent("Olá! Vim pelo site e gostaria de solicitar uma vistoria.");
 const INSTAGRAM = "https://instagram.com/fn.edificacoes";
 const TELEFONE_EXIBIDO = "(81) 98306-1305";
+const CNPJ_EXIBIDO = "69.212.890/0001-00";
 
+/* "Onde atuamos" não entra aqui de propósito: com nove itens o menu passa da largura do
+   cabeçalho no computador e a página ganha rolagem lateral. A seção é alcançada rolando
+   (vem logo depois de "Como funciona") e pelo link no rodapé. */
 const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
@@ -554,6 +559,8 @@ export default function App() {
           </div>
         </section>
 
+        <OndeAtuamos api={API} />
+
         {/* ---------------- Entregas realizadas ---------------- */}
         <section className="secao" id="entregas">
           <div className="env">
@@ -698,6 +705,7 @@ export default function App() {
               <h4>Atendimento</h4>
               <ul>
                 <li>Paulista, Recife e RMR</li>
+                <li><a href="#atuacao">Onde atuamos</a></li>
                 <li><a href={WHATSAPP} target="_blank" rel="noopener">{TELEFONE_EXIBIDO}</a></li>
                 {/* Única repetição do sistema na página, e em texto — não outro botão. */}
                 <li><a href={SISTEMA} target="_blank" rel="noopener">Acessar o Sistema FN</a></li>
@@ -714,7 +722,9 @@ export default function App() {
           </div>
 
           <div className="rodape__base">
-            <span>© {new Date().getFullYear()} FN Edificações</span>
+            {/* CNPJ no rodapé: é o que o cliente procura antes de fechar com uma empresa que
+                ainda não conhece, e o que a nota fiscal vai mostrar. */}
+            <span>© {new Date().getFullYear()} FN Edificações · CNPJ {CNPJ_EXIBIDO}</span>
             <span>Segurança, qualidade e responsabilidade técnica.</span>
           </div>
         </div>
