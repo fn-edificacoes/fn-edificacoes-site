@@ -47,7 +47,7 @@ index.html          meta tags, SEO e dados estruturados (ProfessionalService)
 src/App.jsx         a página inteira, numa única componente por seção
 src/OndeAtuamos.jsx a seção do mapa (a única em arquivo próprio, pelo tamanho)
 public/mapas/       desenho de cada estado (IBGE) para o mapa, gerado por scripts/gerar-mapas.cjs
-src/estilos.css     todo o CSS, sem framework
+src/estilos.css     todo o CSS, sem framework (fontes Inter e Manrope, do Google Fonts, no index.html)
 public/img/         imagens já otimizadas em .webp, em 2 ou 3 larguras
 public/video/       vídeos já comprimidos
 public/404.html     página de erro do Pages
@@ -58,7 +58,10 @@ assets-originais/   originais pesados (PNG, JPEG, MP4) — fonte, nunca servidos
 As imagens **não** são otimizadas na mão: coloque o original em `assets-originais/` e rode
 `npm run otimizar-imagens` (ou o script específico da pasta). Os outros scripts —
 `otimizar-entregas`, `otimizar-vistorias`, `otimizar-videos` — são chamados direto com
-`node scripts/<arquivo>.js`.
+`node scripts/<arquivo>.js`. Para trocar um vídeo: aponte a entrada em
+`scripts/otimizar-videos.js` para o original, rode o script e ajuste `VIDEOS_TRABALHO` ou
+`VIDEOS_CLIENTES` no `App.jsx`. Vídeo editado no CapCut leva `semMarca: true` (corta o logo
+do CapCut) e `capaEm: 2` (a capa sai do segundo 2, não da transição de abertura).
 
 ## Onde atuamos (mapa de calor)
 
@@ -70,16 +73,17 @@ projeção (é isso que encaixa PE e PB lado a lado); refazer com `node scripts/
 
 O que vai a público é pouco de propósito: **clientes atendidos** (total e por estado, contados
 por pessoa/CPF), cidades, empreendimentos e a intensidade de cada cidade em nível 1–5. Clientes
-cidade a cidade e parceiros ficam só no sistema. Atenção: o hero diz "+1.000 imóveis" e o
-indicador mostra o que está no sistema (cadastrado ou importado) — se a base antiga não for
-importada, os dois números podem não bater na mesma página.
+cidade a cidade e parceiros ficam só no sistema. O hero dizia "+1.000 imóveis", que não batia
+com o indicador da mesma página; saiu em outubro/2026 a pedido do dono. **Não escreva número
+de atendimentos à mão no site**: o único número público é o que vem da base.
 
 Os números são **da base real** do sistema, nunca escritos aqui. Sem nenhum cliente posicionado
 no mapa (ex.: logo depois de publicar, antes de os empreendimentos ganharem cidade e regional
 no sistema), a seção não aparece — "0 clientes atendidos" na home seria pior que nada.
 
-**Não está no menu do topo**: com nove itens o cabeçalho passa da largura no computador e a
-página ganha rolagem lateral. O link fica no rodapé.
+**Não está no menu do topo**: o menu tem seis itens e não cabe mais nenhum — com oito ele
+quebrava em duas linhas num notebook de 1024px e a página ganhava rolagem lateral. O link fica
+no rodapé. Abaixo de 1100px o menu vira o botão de três traços.
 
 ## Rotas de redirecionamento
 

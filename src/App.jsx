@@ -25,18 +25,17 @@ const INSTAGRAM = "https://instagram.com/fn.edificacoes";
 const TELEFONE_EXIBIDO = "(81) 98306-1305";
 const CNPJ_EXIBIDO = "69.212.890/0001-00";
 
-/* "Onde atuamos" não entra aqui de propósito: com nove itens o menu passa da largura do
-   cabeçalho no computador e a página ganha rolagem lateral. A seção é alcançada rolando
-   (vem logo depois de "Como funciona") e pelo link no rodapé. */
+/* Seis itens, não mais. Com oito o menu quebrava em duas linhas num notebook de 1024px e a
+   página ganhava rolagem lateral — o primeiro defeito que se vê ao abrir o site. "Contato"
+   saiu porque o botão ao lado já é o contato; "Entregas" e "Onde atuamos" são alcançados
+   rolando e pelo rodapé. */
 const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
-  ["#entregas", "Entregas"],
   ["#vistorias", "A vistoria"],
   ["#depoimentos", "Depoimentos"],
   ["#duvidas", "Dúvidas"],
   ["#parceiros", "FN Club"],
-  ["#contato", "Contato"],
 ];
 
 /* Ícones locais: nenhuma biblioteca externa só para desenhar cinco traços. */
@@ -64,9 +63,63 @@ const ZapIcone = (p) => (
   </svg>
 );
 
+/* Traço de 1.75 em grade de 24: o mesmo peso em todos, para os ícones parecerem da mesma
+   família. Antes as setas e o play eram caracteres de texto (‹ › ▶), que cada sistema
+   desenha de um jeito — no Windows o play virava emoji. */
+const Icone = ({ children, tamanho = 22, ...p }) => (
+  <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>
+    {children}
+  </svg>
+);
+const IconeLaudo = (p) => (
+  <Icone {...p}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h4" /></Icone>
+);
+const IconeTecnico = (p) => (
+  <Icone {...p}><path d="M4 15a8 8 0 0 1 16 0" /><path d="M2 15h20v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" /><path d="M10 7V5h4v2" /></Icone>
+);
+const IconeTela = (p) => (
+  <Icone {...p}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /><path d="m8 10 2.5 2.5L16 8" /></Icone>
+);
+const IconeEscudo = (p) => (
+  <Icone {...p}><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z" /><path d="m8.8 12 2.2 2.2 4.2-4.4" /></Icone>
+);
+const IconeChave = (p) => (
+  <Icone {...p}><circle cx="8" cy="15" r="4" /><path d="m11 12 9-9M16 7l3 3M14 9l2 2" /></Icone>
+);
+const IconeDocumento = (p) => (
+  <Icone {...p}><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4h4" /><path d="M9 12h6M9 16h6" /></Icone>
+);
+const IconeLocal = (p) => (
+  <Icone {...p}><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></Icone>
+);
+const IconeRelogio = (p) => (
+  <Icone {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Icone>
+);
+const IconeSetaEsq = (p) => <Icone {...p}><path d="m15 18-6-6 6-6" /></Icone>;
+const IconeSetaDir = (p) => <Icone {...p}><path d="m9 18 6-6-6-6" /></Icone>;
+const IconeMudo = (p) => (
+  <Icone {...p}><path d="M11 5 6 9H3v6h3l5 4z" /><path d="m22 9-6 6M16 9l6 6" /></Icone>
+);
+const IconeInstagram = (p) => (
+  <Icone {...p}><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" /></Icone>
+);
+const IconePlay = (p) => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
+    <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+  </svg>
+);
+const IconeAspas = (p) => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
+    <path d="M9.6 6C6.5 7.1 4.5 9.7 4.5 13.2V18h5.6v-5.4H7.4c.1-2 1.2-3.6 3-4.4zm9 0c-3.1 1.1-5.1 3.7-5.1 7.2V18h5.6v-5.4h-2.7c.1-2 1.2-3.6 3-4.4z" />
+  </svg>
+);
+
 const SERVICOS = [
   {
     numero: "01",
+    icone: IconeChave,
+    destaque: true,
     titulo: "Vistoria de entrega de chaves",
     resumo:
       "Antes de assinar o aceite, um técnico independente percorre o imóvel e registra o que precisa ser corrigido pela construtora.",
@@ -80,6 +133,7 @@ const SERVICOS = [
   },
   {
     numero: "02",
+    icone: IconeDocumento,
     titulo: "ART ou TRT para reforma",
     resumo:
       "Vai reformar e o condomínio pediu documento de responsabilidade técnica? Analisamos o escopo e emitimos o documento aplicável.",
@@ -146,16 +200,20 @@ import VISTORIAS from "./dados/vistorias.json";
 /* Vídeos curtos. Os de vistoria e defeito são mudos de propósito — som que dispara
    sozinho faz o visitante fechar a aba, e ali o que importa é a imagem. Nos de cliente
    recebendo as chaves o áudio fica, porque a fala é o conteúdo. */
+/* Outubro/2026: entraram os editados (04 a 06 e cliente-03) no lugar de vistoria-02 (repetia
+   a 01), defeito-01, defeito-03 (a capa era uma tela preta com texto) e cliente-01 (só se
+   via a cliente de costas). Os novos vêm primeiro: são os que mais parecem trabalho de
+   empresa, e é o que o visitante vê sem rolar a fileira. */
 const VIDEOS_TRABALHO = [
+  ["vistoria-04", "Chegada ao empreendimento"],
+  ["vistoria-05", "Ambiente por ambiente"],
+  ["vistoria-06", "Equipe em campo"],
   ["vistoria-01", "Verificação de instalações"],
-  ["vistoria-02", "Conferência de acabamentos"],
-  ["vistoria-03", "Teste de percussão em revestimento"],
-  ["defeito-01", "Não conformidade registrada"],
+  ["vistoria-03", "Teste de percussão"],
   ["defeito-02", "Falha de acabamento"],
-  ["defeito-03", "Verificação de esquadria"],
 ];
 const VIDEOS_CLIENTES = [
-  ["cliente-01", "Entrega de chaves"],
+  ["cliente-03", "Entrega de chaves"],
   ["cliente-02", "Entrega de chaves"],
 ];
 
@@ -234,6 +292,34 @@ const DEPOIMENTOS_RECEBIDOS = [
   },
 ];
 
+/* O sistema guarda nome e empreendimento como o cliente digitou, e muita gente digita tudo
+   em maiúsculas — na vitrine isso parece grito. Só mexe no que veio inteiro em maiúsculas;
+   quem escreveu "Bárbara Dias" fica como escreveu. */
+const MINUSCULAS = new Set(["de", "da", "das", "do", "dos", "e"]);
+function nomeProprio(texto) {
+  if (!texto || /\p{Ll}/u.test(texto)) return texto;
+  return texto.toLowerCase().replace(/\S+/g, (p, i) =>
+    i > 0 && MINUSCULAS.has(p) ? p : p.charAt(0).toUpperCase() + p.slice(1));
+}
+function iniciais(nome) {
+  const partes = String(nome || "").split(/\s+/).filter((p) => p && !MINUSCULAS.has(p.toLowerCase()));
+  return ((partes[0]?.[0] || "") + (partes.length > 1 ? partes[partes.length - 1][0] : "")).toUpperCase();
+}
+
+function Assinatura({ nome, empreendimento, origem }) {
+  const exibido = nomeProprio(nome);
+  return (
+    <figcaption>
+      <span className="depoimento__avatar" aria-hidden="true">{iniciais(exibido)}</span>
+      <span className="depoimento__quem">
+        <strong>{exibido}</strong>
+        {empreendimento && <span>{nomeProprio(empreendimento)}</span>}
+        {origem && <span className="depoimento__origem">{origem}</span>}
+      </span>
+    </figcaption>
+  );
+}
+
 function EstrelasFixas({ nota }) {
   return (
     <span className="estrelas" aria-label={`Nota ${nota} de 5`}>
@@ -241,6 +327,21 @@ function EstrelasFixas({ nota }) {
       <span className="estrelas__vazias">{"★★★★★".slice(nota)}</span>
     </span>
   );
+}
+
+/* Mesmos cortes do CSS da antiga grade de depoimentos: 3 colunas no computador, 2 no
+   tablet, 1 no celular. */
+function colunasPara(largura) {
+  return largura >= 900 ? 3 : largura >= 620 ? 2 : 1;
+}
+function useQuantasColunas() {
+  const [n, setN] = useState(() => colunasPara(window.innerWidth));
+  useEffect(() => {
+    const aoMudar = () => setN(colunasPara(window.innerWidth));
+    window.addEventListener("resize", aoMudar);
+    return () => window.removeEventListener("resize", aoMudar);
+  }, []);
+  return n;
 }
 
 function Depoimentos() {
@@ -260,6 +361,7 @@ function Depoimentos() {
   /* Enquanto a API não responde, avaliacoes é null — mas os depoimentos recebidos por
      WhatsApp já estão aqui e não dependem de rede nenhuma. A seção só some quando não há
      absolutamente nada para mostrar: vitrine vazia comunica o contrário do que pretende. */
+  const quantasColunas = useQuantasColunas();
   const daApi = avaliacoes || [];
   if (daApi.length === 0 && DEPOIMENTOS_RECEBIDOS.length === 0) return null;
 
@@ -267,45 +369,81 @@ function Depoimentos() {
     ? (daApi.reduce((s, a) => s + Number(a.nota || 0), 0) / daApi.length).toFixed(1)
     : null;
 
+  const cartoes = [
+    ...daApi.map((a, i) => ({
+      texto: a.comentario,
+      elemento: (
+        <figure className="depoimento" key={`api-${i}`}>
+          <EstrelasFixas nota={Number(a.nota) || 0} />
+          {a.comentario && <blockquote>{a.comentario}</blockquote>}
+          <Assinatura nome={a.cliente} empreendimento={a.empreendimento} origem="Avaliação pelo sistema" />
+        </figure>
+      ),
+    })),
+    ...DEPOIMENTOS_RECEBIDOS.map((d, i) => ({
+      texto: d.texto,
+      foto: Boolean(d.foto),
+      elemento: (
+        <figure className="depoimento" key={`recebido-${i}`}>
+          {d.foto && (
+            <Foto nome={d.foto} alt={`Cliente da FN Edificações no dia da vistoria`} className="depoimento__foto" />
+          )}
+          <IconeAspas className="depoimento__aspas" />
+          <blockquote>{d.texto}</blockquote>
+          <Assinatura nome={d.nome} empreendimento={d.empreendimento} origem="Mensagem enviada à equipe" />
+        </figure>
+      ),
+    })),
+  ];
+
+  /* Colunas montadas aqui, e não com "columns" do CSS nem com grade comum. Os textos vão de
+     uma linha a um parágrafo inteiro: na grade cada linha ficava da altura do maior, com
+     buracos embaixo dos curtos; com "columns" o navegador deixava uma coluna com metade da
+     altura das outras. Os maiores são distribuídos primeiro, cada um na coluna mais baixa até
+     ali (pela estimativa: moldura + nome ≈ 200px, e ~0,62px por letra numa coluna de ~340px);
+     depois cada coluna volta à ordem original, para os do sistema continuarem no alto. */
+  const altura = (c) => 200 + (c.texto?.length || 0) * 0.62 + (c.foto ? 200 : 0);
+  const colunas = Array.from({ length: quantasColunas }, () => ({ altura: 0, cartoes: [] }));
+  cartoes
+    .map((c, ordem) => ({ ...c, ordem }))
+    .sort((a, b) => altura(b) - altura(a))
+    .forEach((c) => {
+      const maisBaixa = colunas.reduce((a, b) => (b.altura < a.altura ? b : a));
+      maisBaixa.cartoes.push(c);
+      maisBaixa.altura += altura(c);
+    });
+  colunas.forEach((col) => col.cartoes.sort((a, b) => a.ordem - b.ordem));
+
   return (
     <section className="secao secao--alt" id="depoimentos">
       <div className="env">
-        <div className="secao__intro">
-          <p className="olho">Quem já foi atendido</p>
-          <h2>O que os clientes dizem.</h2>
-          <p>
-            O que os clientes escreveram depois da entrega das chaves — pelo sistema da FN, ao
-            final do atendimento, e nas mensagens que eles mandam no dia da vistoria.
-            {media && (
-              <> Média de <strong>{media}</strong> em {daApi.length} avaliação(ões) no sistema.</>
-            )}
-          </p>
+        <div className="secao__intro secao__intro--linha">
+          <div>
+            <p className="olho">Quem já foi atendido</p>
+            <h2>O que os clientes dizem.</h2>
+            <p>
+              O que os clientes escreveram depois da entrega das chaves — pelo sistema da FN, ao
+              final do atendimento, e nas mensagens que eles mandam no dia da vistoria.
+            </p>
+          </div>
+          {media && (
+            <div className="nota-media">
+              <strong>{media.replace(".", ",")}</strong>
+              <span>
+                <EstrelasFixas nota={Math.round(Number(media))} />
+                <small>
+                  {daApi.length === 1 ? "1 avaliação" : `${daApi.length} avaliações`} no sistema
+                </small>
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="depoimentos">
-          {daApi.map((a, i) => (
-            <figure className="depoimento" key={`api-${i}`}>
-              <EstrelasFixas nota={Number(a.nota) || 0} />
-              {a.comentario && <blockquote>{a.comentario}</blockquote>}
-              <figcaption>
-                <strong>{a.cliente}</strong>
-                {a.empreendimento && <span>{a.empreendimento}</span>}
-              </figcaption>
-            </figure>
-          ))}
-
-          {DEPOIMENTOS_RECEBIDOS.map((d, i) => (
-            <figure className="depoimento" key={`recebido-${i}`}>
-              {d.foto && (
-                <Foto nome={d.foto} alt={`Cliente da FN Edificações no dia da vistoria`} className="depoimento__foto" />
-              )}
-              <blockquote>{d.texto}</blockquote>
-              <figcaption>
-                <strong>{d.nome}</strong>
-                {d.empreendimento && <span>{d.empreendimento}</span>}
-                <span className="depoimento__origem">Mensagem enviada à equipe</span>
-              </figcaption>
-            </figure>
+        <div className="depoimentos" style={{ gridTemplateColumns: `repeat(${colunas.length}, minmax(0, 1fr))` }}>
+          {colunas.map((coluna, i) => (
+            <div className="depoimentos__coluna" key={i}>
+              {coluna.cartoes.map((c) => c.elemento)}
+            </div>
           ))}
         </div>
       </div>
@@ -327,8 +465,8 @@ function Carrossel({ children, rotulo }) {
       <div className="galeria__trilho" ref={trilho} tabIndex={0} role="region" aria-label={rotulo}>
         {children}
       </div>
-      <button className="galeria__seta galeria__seta--esq" onClick={() => rolar(-1)} aria-label="Ver anteriores">‹</button>
-      <button className="galeria__seta galeria__seta--dir" onClick={() => rolar(1)} aria-label="Ver próximos">›</button>
+      <button className="galeria__seta galeria__seta--esq" onClick={() => rolar(-1)} aria-label="Ver anteriores"><IconeSetaEsq /></button>
+      <button className="galeria__seta galeria__seta--dir" onClick={() => rolar(1)} aria-label="Ver próximos"><IconeSetaDir /></button>
     </div>
   );
 }
@@ -374,13 +512,17 @@ function CartaoVideo({ nome, legenda, comSom }) {
         <button className="videocard__capa" onClick={() => setTocando(true)}
           aria-label={`Assistir: ${legenda}`}>
           <img src={`/video/${nome}.jpg`} alt="" loading="lazy" decoding="async" />
-          <span className="videocard__play" aria-hidden="true">▶</span>
+          <span className="videocard__play" aria-hidden="true"><IconePlay /></span>
         </button>
       )}
-      <figcaption>
-        {legenda}
-        {!comSom && <span className="videocard__mudo"> · sem áudio</span>}
-      </figcaption>
+      {/* A legenda fica por cima da capa e sai quando o vídeo toca, para não cobrir os
+          controles do player. */}
+      {!tocando && (
+        <figcaption>
+          {legenda}
+          {!comSom && <span className="videocard__mudo"><IconeMudo tamanho={13} /> sem áudio</span>}
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -471,10 +613,13 @@ export default function App() {
                   <ZapIcone width="18" height="18" /> Tirar uma dúvida
                 </a>
               </div>
-              <p className="hero__apoio">Paulista, Recife e Região Metropolitana · Resposta no mesmo dia</p>
+              <ul className="hero__apoio">
+                <li><IconeLocal tamanho={17} /> Paulista, Recife e Região Metropolitana</li>
+                <li><IconeRelogio tamanho={17} /> Resposta no mesmo dia</li>
+              </ul>
             </div>
 
-            <figure className="hero__figura" style={{ margin: 0 }}>
+            <figure className="hero__figura">
               {/* Retrato: a foto mostra o técnico agachado registrando um ralo — cortar
                   para paisagem tiraria ou ele ou o ponto verificado, que é a cena toda. */}
               <img className="hero__retrato"
@@ -482,9 +627,16 @@ export default function App() {
                 srcSet="/img/hero-vistoria-560.webp 560w, /img/hero-vistoria-1120.webp 1120w"
                 sizes="(max-width: 900px) 100vw, 46vw"
                 alt="Técnico da FN Edificações registrando a verificação de um ralo durante vistoria" />
+              {/* Aqui havia "+1.000 imóveis vistoriados", que não batia com o número de clientes
+                  que o mapa mostra logo abaixo (vindo da base real). Número que o visitante não
+                  consegue conferir enfraquece o que é conferível; o selo agora diz o que é
+                  verdade por definição do serviço. */}
               <figcaption className="hero__selo">
-                <strong>+1.000</strong>
-                <span>imóveis vistoriados em PE</span>
+                <span className="hero__selo-icone"><IconeEscudo /></span>
+                <span>
+                  <strong>Vistoria independente</strong>
+                  <span>Sem vínculo com a construtora</span>
+                </span>
               </figcaption>
             </figure>
           </div>
@@ -492,18 +644,19 @@ export default function App() {
 
         <div className="faixa">
           <div className="env faixa__grade">
-            <div className="faixa__item">
-              <strong>Laudo digital</strong>
-              <span>Com fotos, norma técnica e recomendações</span>
-            </div>
-            <div className="faixa__item">
-              <strong>Técnico em edificações</strong>
-              <span>Responsabilidade técnica registrada</span>
-            </div>
-            <div className="faixa__item">
-              <strong>Acompanhamento online</strong>
-              <span>Você segue cada etapa pelo sistema</span>
-            </div>
+            {[
+              [IconeLaudo, "Laudo digital", "Com fotos, norma técnica e recomendações"],
+              [IconeTecnico, "Técnico em edificações", "Responsabilidade técnica registrada"],
+              [IconeTela, "Acompanhamento online", "Você segue cada etapa pelo sistema"],
+            ].map(([IconeItem, titulo, texto]) => (
+              <div className="faixa__item" key={titulo}>
+                <span className="faixa__icone"><IconeItem /></span>
+                <span className="faixa__texto">
+                  <strong>{titulo}</strong>
+                  <span>{texto}</span>
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -517,9 +670,13 @@ export default function App() {
             </div>
 
             <div className="servicos">
-              {SERVICOS.map((s) => (
-                <article className="servico" key={s.numero}>
-                  <span className="servico__num">{s.numero}</span>
+              {SERVICOS.map(({ icone: IconeServico, ...s }) => (
+                <article className={`servico${s.destaque ? " servico--destaque" : ""}`} key={s.numero}>
+                  {s.destaque && <span className="servico__selo">Serviço principal</span>}
+                  <div className="servico__topo">
+                    <span className="servico__icone"><IconeServico tamanho={26} /></span>
+                    <span className="servico__num">{s.numero}</span>
+                  </div>
                   <h3>{s.titulo}</h3>
                   <p>{s.resumo}</p>
                   <ul>
@@ -527,7 +684,8 @@ export default function App() {
                       <li key={i}><Check /> {i}</li>
                     ))}
                   </ul>
-                  <a className="btn btn--azul" href={SISTEMA} target="_blank" rel="noopener">
+                  <a className={`btn ${s.destaque ? "btn--principal" : "btn--azul"}`}
+                    href={SISTEMA} target="_blank" rel="noopener">
                     {s.textoBotao}
                   </a>
                 </article>
@@ -604,11 +762,15 @@ export default function App() {
 
         {/* ---------------- Clientes recebendo ---------------- */}
         <section className="secao" id="momento">
-          <div className="env">
+          <div className="env momento">
             <div className="secao__intro">
               <p className="olho">O momento da chave</p>
               <h2>A parte que a gente faz por último.</h2>
               <p>Clientes recebendo o imóvel com o laudo em mãos.</p>
+              <a className="btn btn--principal" style={{ marginTop: 26 }}
+                href={SISTEMA} target="_blank" rel="noopener">
+                Solicitar vistoria
+              </a>
             </div>
             <div className="videos videos--duplo">
               {VIDEOS_CLIENTES.map(([nome, legenda]) => (
@@ -622,10 +784,14 @@ export default function App() {
 
         {/* ---------------- Dúvidas ---------------- */}
         <section className="secao secao--alt" id="duvidas">
-          <div className="env">
+          <div className="env duvidas">
             <div className="secao__intro">
               <p className="olho">Dúvidas frequentes</p>
               <h2>O que os clientes mais perguntam.</h2>
+              <p>Não achou a sua? Mande pelo WhatsApp — quem responde é a equipe técnica.</p>
+              <a className="btn btn--zap" style={{ marginTop: 22 }} href={WHATSAPP} target="_blank" rel="noopener">
+                <ZapIcone width="18" height="18" /> Perguntar no WhatsApp
+              </a>
             </div>
 
             <div className="faq">
@@ -673,18 +839,22 @@ export default function App() {
         {/* ---------------- Chamada final ---------------- */}
         <section className="secao final" id="contato">
           <div className="env">
-            <h2>Receba seu imóvel com clareza.</h2>
-            <p>
-              Solicite sua vistoria pelo sistema ou mande uma mensagem — respondemos
-              no mesmo dia, em horário comercial.
-            </p>
-            <div className="final__acoes">
-              <a className="btn btn--principal" href={SISTEMA} target="_blank" rel="noopener">
-                Solicitar vistoria
-              </a>
-              <a className="btn btn--zap" href={WHATSAPP} target="_blank" rel="noopener">
-                <ZapIcone width="18" height="18" /> {TELEFONE_EXIBIDO}
-              </a>
+            <div className="final__painel">
+              <div>
+                <h2>Receba seu imóvel com clareza.</h2>
+                <p>
+                  Solicite sua vistoria pelo sistema ou mande uma mensagem — respondemos
+                  no mesmo dia, em horário comercial.
+                </p>
+              </div>
+              <div className="final__acoes">
+                <a className="btn btn--principal" href={SISTEMA} target="_blank" rel="noopener">
+                  Solicitar vistoria
+                </a>
+                <a className="btn btn--zap" href={WHATSAPP} target="_blank" rel="noopener">
+                  <ZapIcone width="18" height="18" /> {TELEFONE_EXIBIDO}
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -694,10 +864,15 @@ export default function App() {
         <div className="env">
           <div className="rodape__grade">
             <div>
-              <h4>FN Edificações</h4>
+              <div className="rodape__marca">
+                <img src="/img/logo-fn-transparente-800.webp" alt="" width="44" height="44" loading="lazy" />
+                <strong>FN Edificações</strong>
+              </div>
               <p>Vistorias, laudos e responsabilidade técnica para o seu imóvel.</p>
-              <p style={{ marginTop: 12 }}>
-                <a href={INSTAGRAM} target="_blank" rel="noopener">@fn.edificacoes</a>
+              <p style={{ marginTop: 14 }}>
+                <a className="rodape__social" href={INSTAGRAM} target="_blank" rel="noopener">
+                  <IconeInstagram tamanho={18} /> @fn.edificacoes
+                </a>
               </p>
             </div>
 
@@ -706,6 +881,7 @@ export default function App() {
               <ul>
                 <li>Paulista, Recife e RMR</li>
                 <li><a href="#atuacao">Onde atuamos</a></li>
+                <li><a href="#entregas">Entregas realizadas</a></li>
                 <li><a href={WHATSAPP} target="_blank" rel="noopener">{TELEFONE_EXIBIDO}</a></li>
                 {/* Única repetição do sistema na página, e em texto — não outro botão. */}
                 <li><a href={SISTEMA} target="_blank" rel="noopener">Acessar o Sistema FN</a></li>
