@@ -344,8 +344,14 @@ function useQuantasColunas() {
   return n;
 }
 
+/* No celular os depoimentos viram uma coluna só, e os dez em fila davam umas seis telas de
+   rolagem até a próxima seção. Ali aparecem os primeiros e um botão para o resto; em duas ou
+   três colunas cabem todos sem cansar. */
+const DEPOIMENTOS_NO_CELULAR = 4;
+
 function Depoimentos() {
   const [avaliacoes, setAvaliacoes] = useState(null);
+  const [verTodos, setVerTodos] = useState(false);
 
   useEffect(() => {
     let vivo = true;
@@ -402,9 +408,13 @@ function Depoimentos() {
      altura das outras. Os maiores são distribuídos primeiro, cada um na coluna mais baixa até
      ali (pela estimativa: moldura + nome ≈ 200px, e ~0,62px por letra numa coluna de ~340px);
      depois cada coluna volta à ordem original, para os do sistema continuarem no alto. */
+  const recolhido = quantasColunas === 1 && !verTodos && cartoes.length > DEPOIMENTOS_NO_CELULAR;
+  // Recolhido, só os que têm texto: um cartão só de estrelas não convence ninguém sozinho.
+  const exibidos = recolhido ? cartoes.filter((c) => c.texto).slice(0, DEPOIMENTOS_NO_CELULAR) : cartoes;
+
   const altura = (c) => 200 + (c.texto?.length || 0) * 0.62 + (c.foto ? 200 : 0);
   const colunas = Array.from({ length: quantasColunas }, () => ({ altura: 0, cartoes: [] }));
-  cartoes
+  exibidos
     .map((c, ordem) => ({ ...c, ordem }))
     .sort((a, b) => altura(b) - altura(a))
     .forEach((c) => {
@@ -415,7 +425,7 @@ function Depoimentos() {
   colunas.forEach((col) => col.cartoes.sort((a, b) => a.ordem - b.ordem));
 
   return (
-    <section className="secao secao--alt" id="depoimentos">
+    <section className="secao" id="depoimentos">
       <div className="env">
         <div className="secao__intro secao__intro--linha">
           <div>
@@ -446,6 +456,12 @@ function Depoimentos() {
             </div>
           ))}
         </div>
+        {recolhido && (
+          <button type="button" className="btn btn--contorno-escuro depoimentos__mais"
+            onClick={() => setVerTodos(true)}>
+            Ver todos os {cartoes.length} depoimentos
+          </button>
+        )}
       </div>
     </section>
   );
@@ -540,14 +556,50 @@ function Foto({ nome, alt, className, ...resto }) {
   );
 }
 
+/* Qual seção do menu está no meio da tela agora. A página é longa e o menu fica fixo no
+   alto: marcar onde a pessoa está é o que faz o menu servir de mapa, e não só de atalho.
+   Fora das seções do menu (mapa, entregas, momento) nenhum item fica marcado. */
+function useSecaoAtual() {
+  const [atual, setAtual] = useState(null);
+  useEffect(() => {
+    const vistas = new Map();
+    const observador = new IntersectionObserver((entradas) => {
+      for (const e of entradas) vistas.set(e.target.id, e.isIntersecting);
+      const primeira = NAVEGACAO.find(([href]) => vistas.get(href.slice(1)));
+      setAtual(primeira ? primeira[0] : null);
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    for (const [href] of NAVEGACAO) {
+      const el = document.getElementById(href.slice(1));
+      if (el) observador.observe(el);
+    }
+    return () => observador.disconnect();
+  }, []);
+  return atual;
+}
+
+/* Sombra no cabeçalho só depois que a página rola: no alto ele se funde com o topo escuro,
+   e com sombra ali parecia uma faixa colada por cima. */
+function useRolou() {
+  const [rolou, setRolou] = useState(false);
+  useEffect(() => {
+    const aoRolar = () => setRolou(window.scrollY > 8);
+    aoRolar();
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    return () => window.removeEventListener("scroll", aoRolar);
+  }, []);
+  return rolou;
+}
+
 export default function App() {
   const [gaveta, setGaveta] = useState(false);
+  const secaoAtual = useSecaoAtual();
+  const rolou = useRolou();
 
   return (
     <>
       <a className="pular" href="#conteudo">Pular para o conteúdo</a>
 
-      <header className="cabecalho">
+      <header className={`cabecalho${rolou ? " cabecalho--rolou" : ""}`}>
         <div className="env cabecalho__barra">
           <a className="marca" href="#inicio" aria-label="FN Edificações, página inicial">
             <img src="/img/logo-fn-transparente-800.webp" alt="" width="48" height="48" />
@@ -559,7 +611,8 @@ export default function App() {
 
           <nav className="menu" aria-label="Navegação principal">
             {NAVEGACAO.map(([href, texto]) => (
-              <a key={href} href={href}>{texto}</a>
+              <a key={href} href={href} className={secaoAtual === href ? "ativo" : undefined}
+                aria-current={secaoAtual === href ? "location" : undefined}>{texto}</a>
             ))}
           </nav>
 
@@ -720,7 +773,7 @@ export default function App() {
         <OndeAtuamos api={API} />
 
         {/* ---------------- Entregas realizadas ---------------- */}
-        <section className="secao" id="entregas">
+        <section className="secao secao--alt" id="entregas">
           <div className="env">
             <div className="secao__intro">
               <p className="olho">Entregas realizadas</p>
@@ -736,7 +789,7 @@ export default function App() {
         </section>
 
         {/* ---------------- Vistoriadores em campo ---------------- */}
-        <section className="secao secao--alt" id="vistorias">
+        <section className="secao" id="vistorias">
           <div className="env">
             <div className="secao__intro">
               <p className="olho">A vistoria por dentro</p>
@@ -751,7 +804,8 @@ export default function App() {
           <LinhaDeFotos nomes={VISTORIAS} pasta="vistorias" rotulo="Fotos de vistorias em campo"
             descricao="Técnico da FN Edificações durante vistoria" />
 
-          <div className="env" style={{ marginTop: 34 }}>
+          <div className="env" style={{ marginTop: 40 }}>
+            <p className="rotulo-linha">Em vídeo <span>· toque para assistir</span></p>
             <div className="videos">
               {VIDEOS_TRABALHO.map(([nome, legenda]) => (
                 <CartaoVideo key={nome} nome={nome} legenda={legenda} comSom={false} />
@@ -761,7 +815,7 @@ export default function App() {
         </section>
 
         {/* ---------------- Clientes recebendo ---------------- */}
-        <section className="secao" id="momento">
+        <section className="secao secao--alt" id="momento">
           <div className="env momento">
             <div className="secao__intro">
               <p className="olho">O momento da chave</p>
