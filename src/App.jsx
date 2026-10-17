@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import OndeAtuamos from "./OndeAtuamos.jsx";
+import { buscarUmaVez } from "./dadosPublicos.js";
 
 /* ============================================================================
    Site institucional da FN Edificações.
@@ -329,6 +330,68 @@ function EstrelasFixas({ nota }) {
   );
 }
 
+/* Números do topo, lidos da base real do sistema — no lugar do "+1.000" escrito à mão, que
+   não batia com o mapa mais abaixo. Cada visita lê o número do momento: cliente novo no
+   sistema é cliente a mais aqui, sem ninguém mexer no site.
+
+   Regras para um número aparecer:
+   - clientes: maior que zero (a mesma regra do mapa: "0 clientes" seria pior que nada);
+   - nota: só com 3 avaliações ou mais. Uma avaliação sozinha dá "5,0" com cara de
+     estatística, e isso não é honesto com quem lê.
+   Enquanto a API responde, o espaço fica reservado (para o topo não pular quando os números
+   chegarem); se ela falhar, o bloco some. */
+const MINIMO_DE_AVALIACOES = 3;
+
+function NumerosDoSistema() {
+  const [numeros, setNumeros] = useState(null);
+
+  useEffect(() => {
+    let vivo = true;
+    Promise.all([
+      buscarUmaVez(`${API}/api/nacional/mapa-publico`),
+      buscarUmaVez(`${API}/api/avaliacoes/vitrine`),
+    ]).then(([mapa, vitrine]) => {
+      if (!vivo) return;
+      const notas = (vitrine?.avaliacoes || []).map((a) => Number(a.nota)).filter((n) => n > 0);
+      setNumeros({
+        clientes: Number(mapa?.totais?.clientes) || 0,
+        // Estado com mais clientes primeiro: "em PE e PB", não na ordem alfabética.
+        estados: (mapa?.ufs || []).filter((u) => u.clientes > 0)
+          .sort((a, b) => b.clientes - a.clientes).map((u) => u.uf),
+        media: notas.length >= MINIMO_DE_AVALIACOES ? notas.reduce((a, n) => a + n, 0) / notas.length : null,
+      });
+    });
+    return () => { vivo = false; };
+  }, []);
+
+  if (numeros === null) return <div className="hero__numeros hero__numeros--reserva" aria-hidden="true" />;
+  if (!numeros.clientes && !numeros.media) return null;
+
+  const estados = numeros.estados.length
+    ? ` em ${numeros.estados.slice(0, -1).join(", ")}${numeros.estados.length > 1 ? " e " : ""}${numeros.estados.at(-1)}`
+    : "";
+
+  return (
+    <div className="hero__numeros">
+      {numeros.clientes > 0 && (
+        <a className="hero__numero" href="#atuacao">
+          <strong>{numeros.clientes.toLocaleString("pt-BR")}</strong>
+          <span>clientes atendidos{estados}</span>
+        </a>
+      )}
+      {numeros.media && (
+        <a className="hero__numero" href="#depoimentos">
+          <strong>
+            {numeros.media.toFixed(1).replace(".", ",")}
+            <EstrelasFixas nota={Math.round(numeros.media)} />
+          </strong>
+          <span>nota média dos clientes</span>
+        </a>
+      )}
+    </div>
+  );
+}
+
 /* Mesmos cortes do CSS da antiga grade de depoimentos: 3 colunas no computador, 2 no
    tablet, 1 no celular. */
 function colunasPara(largura) {
@@ -355,12 +418,10 @@ function Depoimentos() {
 
   useEffect(() => {
     let vivo = true;
-    fetch(`${API}/api/avaliacoes/vitrine`)
-      .then((r) => (r.ok ? r.json() : { avaliacoes: [] }))
-      .then((d) => { if (vivo) setAvaliacoes(d.avaliacoes || []); })
-      // Site fora do ar por causa de uma avaliação seria péssimo negócio: em qualquer
-      // falha a seção simplesmente não aparece.
-      .catch(() => { if (vivo) setAvaliacoes([]); });
+    // Site fora do ar por causa de uma avaliação seria péssimo negócio: em qualquer falha
+    // buscarUmaVez devolve null e a seção fica só com os depoimentos recebidos por mensagem.
+    buscarUmaVez(`${API}/api/avaliacoes/vitrine`)
+      .then((d) => { if (vivo) setAvaliacoes(d?.avaliacoes || []); });
     return () => { vivo = false; };
   }, []);
 
@@ -590,6 +651,43 @@ function useRolou() {
   return rolou;
 }
 
+/* Barra fixa no pé da tela do celular, com as duas ações. No computador o botão do
+   cabeçalho está sempre à vista; no celular o cabeçalho só tem o menu, e quem está no meio
+   de um depoimento precisava rolar até o fim para pedir a vistoria.
+
+   Ela só aparece quando os botões do topo saem da tela, e some de novo quando a chamada
+   final entra — os mesmos dois botões duas vezes na mesma tela seria ruído. */
+function BarraCelular() {
+  const [mostrar, setMostrar] = useState(false);
+
+  useEffect(() => {
+    const alvos = [document.querySelector(".hero__acoes"), document.querySelector(".final__acoes")].filter(Boolean);
+    if (!alvos.length) return;
+    const vistos = new Map();
+    const observador = new IntersectionObserver((entradas) => {
+      for (const e of entradas) vistos.set(e.target, e.isIntersecting);
+      // Mostra só depois de o topo ter passado: no primeiro carregamento os botões do topo
+      // ainda não foram medidos, e a barra não deve piscar na tela.
+      setMostrar(vistos.size === alvos.length && ![...vistos.values()].some(Boolean));
+    });
+    alvos.forEach((a) => observador.observe(a));
+    return () => observador.disconnect();
+  }, []);
+
+  const foco = mostrar ? undefined : -1;
+  return (
+    <div className={`barra-celular${mostrar ? " barra-celular--visivel" : ""}`} aria-hidden={!mostrar}>
+      <a className="btn btn--principal" href={SISTEMA} target="_blank" rel="noopener" tabIndex={foco}>
+        Solicitar vistoria
+      </a>
+      <a className="btn btn--zap" href={WHATSAPP} target="_blank" rel="noopener" tabIndex={foco}
+        aria-label="Falar pelo WhatsApp">
+        <ZapIcone width="20" height="20" /> WhatsApp
+      </a>
+    </div>
+  );
+}
+
 export default function App() {
   const [gaveta, setGaveta] = useState(false);
   const secaoAtual = useSecaoAtual();
@@ -670,6 +768,7 @@ export default function App() {
                 <li><IconeLocal tamanho={17} /> Paulista, Recife e Região Metropolitana</li>
                 <li><IconeRelogio tamanho={17} /> Resposta no mesmo dia</li>
               </ul>
+              <NumerosDoSistema />
             </div>
 
             <figure className="hero__figura">
@@ -964,6 +1063,7 @@ export default function App() {
         aria-label="Falar pelo WhatsApp">
         <ZapIcone />
       </a>
+      <BarraCelular />
     </>
   );
 }

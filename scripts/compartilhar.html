@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- Molde da imagem que aparece quando alguém manda o link do site no WhatsApp, Facebook ou
+     LinkedIn (og:image). Não vai para o ar: o scripts/gerar-imagem-compartilhar.js abre este
+     arquivo no Chrome sem janela, fotografa em 1200×630 e grava public/img/compartilhar.jpg.
+     Mesmas fontes, cores e malha do topo do site, para o link já chegar com a cara da FN. -->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=Manrope:wght@800&display=block" />
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative; font-family: "Inter", sans-serif; color: #fff;
+    background:
+      radial-gradient(700px 420px at 92% 0%, rgba(44, 117, 181, .42), transparent 62%),
+      linear-gradient(180deg, #12335B 0%, #0B2140 100%);
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .055) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 90% at 75% 40%, #000 10%, transparent 75%);
+  }
+  .texto { position: absolute; left: 72px; top: 64px; width: 640px; }
+  .marca { display: flex; align-items: center; gap: 16px; }
+  .marca img { width: 68px; height: 68px; background: #fff; border-radius: 14px; padding: 5px; object-fit: contain; }
+  .marca strong { font-family: "Manrope", sans-serif; font-size: 30px; letter-spacing: -.02em; display: block; }
+  .marca span { font-size: 17px; color: rgba(255, 255, 255, .7); }
+  .olho {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 54px;
+    font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 999px; padding: 8px 18px;
+  }
+  .olho::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #C8A44D; }
+  h1 {
+    font-family: "Manrope", sans-serif; font-weight: 800; font-size: 58px; line-height: 1.08;
+    letter-spacing: -.03em; margin-top: 22px;
+  }
+  h1 em { font-style: normal; color: #C8A44D; }
+  .pe { position: absolute; left: 72px; bottom: 56px; display: flex; gap: 28px; font-size: 19px; color: rgba(255, 255, 255, .82); }
+  .pe span { display: flex; align-items: center; gap: 9px; }
+  .pe span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #C8A44D; }
+  .foto { position: absolute; right: 78px; top: 58px; width: 360px; height: 480px; }
+  .foto::before {
+    content: ""; position: absolute; inset: 20px -20px -20px 20px;
+    border: 2px solid rgba(200, 164, 77, .55); border-radius: 24px;
+  }
+  .foto img {
+    position: relative; width: 100%; height: 100%; object-fit: cover; border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, .16); box-shadow: 0 30px 60px rgba(3, 12, 26, .45);
+  }
+</style>
+</head>
+<body>
+  <div class="texto">
+    <div class="marca">
+      <img src="../public/img/logo-fn-transparente-800.webp" alt="" />
+      <div><strong>FN Edificações</strong><span>Vistorias e responsabilidade técnica</span></div>
+    </div>
+    <div class="olho">Vistoria técnica independente</div>
+    <h1>Não assine o aceite <em>antes de saber</em> o que tem no seu imóvel.</h1>
+  </div>
+  <div class="pe">
+    <span>Laudo com fotos e norma técnica</span>
+    <span>Paulista, Recife e RMR</span>
+  </div>
+  <div class="foto"><img src="../public/img/hero-vistoria-1120.webp" alt="" /></div>
+</body>
+</html>

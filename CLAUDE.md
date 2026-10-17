@@ -6,8 +6,10 @@ sistema. Não tem login nem banco.
 
 **Conversa com a API em dois pontos**, ambos públicos e sem token: a seção de depoimentos
 busca `/api/avaliacoes/vitrine` (só o que o Atendimento aprovou para aparecer) e a seção
-"Onde atuamos" busca `/api/nacional/mapa-publico`. Se a chamada falhar, a seção se esconde
-em vez de quebrar o site —
+"Onde atuamos" busca `/api/nacional/mapa-publico`. O topo da página reaproveita as duas
+respostas para mostrar o total de clientes e a nota média (`NumerosDoSistema` no `App.jsx`;
+cada endereço é chamado uma vez só, pelo cache de `src/dadosPublicos.js`). Se a chamada
+falhar, a seção (ou o número do topo) se esconde em vez de quebrar o site —
 o que é bom para o visitante e traiçoeiro para quem mantém: quando a API mudou de endereço
 na migração de 28/08/2026, os depoimentos sumiram da home e ninguém percebeu por uma
 semana, porque não havia erro em lugar nenhum. Ao mexer no endereço da API, **abra a home e
@@ -44,6 +46,7 @@ não há upload manual. O deploy leva cerca de um minuto.
 
 ```
 index.html          meta tags, SEO e dados estruturados (ProfessionalService)
+src/dadosPublicos.js cache das chamadas públicas à API, divididas entre topo, mapa e depoimentos
 src/App.jsx         a página inteira, numa única componente por seção
 src/OndeAtuamos.jsx a seção do mapa (a única em arquivo próprio, pelo tamanho)
 public/mapas/       desenho de cada estado (IBGE) para o mapa, gerado por scripts/gerar-mapas.cjs
@@ -63,6 +66,14 @@ As imagens **não** são otimizadas na mão: coloque o original em `assets-origi
 `VIDEOS_CLIENTES` no `App.jsx`. Vídeo editado no CapCut leva `semMarca: true` (corta o logo
 do CapCut) e `capaEm: 2` (a capa sai do segundo 2, não da transição de abertura).
 
+## Imagem de compartilhamento
+
+A prévia que aparece quando o link é mandado no WhatsApp/Facebook/LinkedIn é
+`public/img/compartilhar.jpg` (1200×630, JPG — WebP nem sempre aparece no WhatsApp). O desenho
+está em `scripts/compartilhar.html`; para mudar texto ou foto, edite o HTML e rode
+`node scripts/gerar-imagem-compartilhar.js` (usa o Chrome instalado na máquina). O WhatsApp
+guarda a prévia de cada link por alguns dias: um link já compartilhado pode demorar a trocar.
+
 ## Onde atuamos (mapa de calor)
 
 `src/OndeAtuamos.jsx`, logo depois de "Como funciona". Mostra só as regionais que a Gerência
@@ -74,8 +85,9 @@ projeção (é isso que encaixa PE e PB lado a lado); refazer com `node scripts/
 O que vai a público é pouco de propósito: **clientes atendidos** (total e por estado, contados
 por pessoa/CPF), cidades, empreendimentos e a intensidade de cada cidade em nível 1–5. Clientes
 cidade a cidade e parceiros ficam só no sistema. O hero dizia "+1.000 imóveis", que não batia
-com o indicador da mesma página; saiu em outubro/2026 a pedido do dono. **Não escreva número
-de atendimentos à mão no site**: o único número público é o que vem da base.
+com o indicador da mesma página; saiu em outubro/2026 a pedido do dono, e no lugar entraram os
+números lidos da base (clientes atendidos e nota média, esta só com 3 avaliações ou mais).
+**Não escreva número de atendimentos à mão no site**: o único número público é o que vem da base.
 
 Os números são **da base real** do sistema, nunca escritos aqui. Sem nenhum cliente posicionado
 no mapa (ex.: logo depois de publicar, antes de os empreendimentos ganharem cidade e regional

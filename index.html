@@ -2,7 +2,9 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: no iPhone, deixa a barra fixa do pé da tela respeitar a área da
+         barrinha de gestos (env(safe-area-inset-bottom) no CSS). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="icon" type="image/png" href="/img/logo-fn-transparente-800.webp" />
 
     <!-- Fonte própria em vez da do sistema: no Windows a página saía em Segoe UI e no
@@ -22,7 +24,14 @@
     <meta property="og:title" content="FN Edificações | Vistoria de entrega de chaves" />
     <meta property="og:description" content="Receba seu imóvel novo com um laudo técnico independente. Vistorias, laudos e ART/TRT em Paulista, Recife e RMR." />
     <meta property="og:url" content="https://fnedificacoes.com.br/" />
-    <meta property="og:image" content="https://fnedificacoes.com.br/img/hero-inspector-1600.webp" />
+    <!-- JPG em 1200×630, feito para a prévia de link: WebP nem sempre aparece no WhatsApp.
+         Gerado por scripts/gerar-imagem-compartilhar.js. -->
+    <meta property="og:image" content="https://fnedificacoes.com.br/img/compartilhar.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FN Edificações — vistoria técnica independente na entrega das chaves" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#12335B" />
 
     <!-- Dados estruturados: ajuda o Google a mostrar a empresa como negócio local. -->
