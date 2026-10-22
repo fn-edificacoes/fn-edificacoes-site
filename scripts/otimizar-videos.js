@@ -16,37 +16,47 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, statSync, existsSync } from "node:fs";
 import path from "node:path";
 
-const ORIGEM = "C:/Users/user/Downloads/clientes";
+/* Dois lotes, em dois computadores: o de julho/2026 (gravações cruas do WhatsApp) e o de
+   outubro/2026 (já editados no CapCut). Quem rodar de novo ajusta a pasta do lote que tiver
+   à mão; os vídeos cujo original não for encontrado são pulados e o publicado fica como está. */
+const LOTE_JULHO = "C:/Users/user/Downloads/clientes";
+const LOTE_OUTUBRO = "C:/Users/vrvil/Downloads";
 const DESTINO = "public/video";
 mkdirSync(DESTINO, { recursive: true });
 
-/* [pasta, arquivo, nome de saída, manter áudio] */
+/* semMarca: corta os 6% de cima, onde o CapCut carimba o logo dele em todos os quadros.
+   capaEm: segundo de onde sai o poster. Os editados abrem com transição (quadro escuro ou
+   borrado), então o primeiro quadro não serve de capa para eles. */
 const ESCOLHIDOS = [
-  ["videos", "WhatsApp Video 2026-07-26 at 20.09.59.mp4", "vistoria-01", false],
-  ["videos", "WhatsApp Video 2026-07-26 at 20.09.52.mp4", "vistoria-02", false],
-  ["videos", "teste de percurção.mp4", "vistoria-03", false],
+  { pasta: path.join(LOTE_JULHO, "videos"), arquivo: "WhatsApp Video 2026-07-26 at 20.09.59.mp4", nome: "vistoria-01" },
+  { pasta: path.join(LOTE_JULHO, "videos"), arquivo: "teste de percurção.mp4", nome: "vistoria-03" },
+  { pasta: path.join(LOTE_JULHO, "defeitos"), arquivo: "WhatsApp Video 2026-07-26 at 20.20.04.mp4", nome: "defeito-02" },
+  { pasta: path.join(LOTE_JULHO, "videos clientes"), arquivo: "WhatsApp Video 2026-07-26 at 20.13.42.mp4", nome: "cliente-02", comAudio: true },
 
-  ["defeitos", "WhatsApp Video 2026-07-26 at 20.10.26.mp4", "defeito-01", false],
-  ["defeitos", "WhatsApp Video 2026-07-26 at 20.20.04.mp4", "defeito-02", false],
-  ["defeitos", "WhatsApp Video 2026-07-26 at 20.20.09.mp4", "defeito-03", false],
-
-  ["videos clientes", "WhatsApp Video 2026-07-26 at 20.10.25.mp4", "cliente-01", true],
-  ["videos clientes", "WhatsApp Video 2026-07-26 at 20.13.42.mp4", "cliente-02", true],
+  { pasta: LOTE_OUTUBRO, arquivo: "WhatsApp Video 2026-10-05 at 12.47.30.mp4", nome: "vistoria-04", semMarca: true, capaEm: 2 },
+  { pasta: LOTE_OUTUBRO, arquivo: "WhatsApp Video 2026-10-05 at 12.47.32.mp4", nome: "vistoria-05", semMarca: true, capaEm: 2 },
+  { pasta: LOTE_OUTUBRO, arquivo: "WhatsApp Video 2026-10-05 at 12.47.27.mp4", nome: "vistoria-06", semMarca: true, capaEm: 2 },
+  { pasta: LOTE_OUTUBRO, arquivo: "WhatsApp Video 2026-10-05 at 12.47.24.mp4", nome: "cliente-03", semMarca: true, capaEm: 2, comAudio: true },
 ];
 
 const rodar = (args) => execFileSync(ffmpeg, ["-y", "-loglevel", "error", ...args], { stdio: ["ignore", "pipe", "pipe"] });
 
 let antes = 0, depois = 0;
 
-for (const [pasta, arquivo, nome, comAudio] of ESCOLHIDOS) {
-  const entrada = path.join(ORIGEM, pasta, arquivo);
+for (const { pasta, arquivo, nome, comAudio = false, semMarca = false, capaEm = 0 } of ESCOLHIDOS) {
+  const entrada = path.join(pasta, arquivo);
   if (!existsSync(entrada)) { console.log(`FALTOU: ${entrada}`); continue; }
   antes += statSync(entrada).size;
 
   const saida = path.join(DESTINO, `${nome}.mp4`);
+  const filtros = [
+    ...(semMarca ? ["crop=iw:trunc(ih*0.94/2)*2:0:ih*0.06"] : []),
+    "scale=-2:832",                  // altura fixa; largura par, exigência do H.264
+    "fps=30",                        // alguns chegam a 60 quadros: o dobro do peso, sem ganho visível
+  ];
   rodar([
     "-i", entrada,
-    "-vf", "scale=-2:832",          // altura fixa; largura par, exigência do H.264
+    "-vf", filtros.join(","),
     "-c:v", "libx264", "-crf", "30", "-preset", "slow", "-profile:v", "main",
     ...(comAudio ? ["-c:a", "aac", "-b:a", "96k"] : ["-an"]),
     "-movflags", "+faststart",       // começa a tocar antes de baixar tudo
@@ -55,8 +65,8 @@ for (const [pasta, arquivo, nome, comAudio] of ESCOLHIDOS) {
   ]);
   depois += statSync(saida).size;
 
-  // Poster: primeiro quadro, para a página não mostrar retângulo preto.
-  rodar(["-i", saida, "-frames:v", "1", "-vf", "scale=-2:832", "-q:v", "4",
+  // Poster, para a página não mostrar retângulo preto.
+  rodar(["-ss", String(capaEm), "-i", saida, "-frames:v", "1", "-vf", "scale=-2:832", "-q:v", "4",
     path.join(DESTINO, `${nome}.jpg`)]);
 
   const mb = (statSync(saida).size / 1048576).toFixed(1);

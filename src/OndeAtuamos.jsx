@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { buscarUmaVez } from "./dadosPublicos.js";
 
 /* ============================================================================
    Onde atuamos — mapa de calor das cidades atendidas.
@@ -41,15 +42,18 @@ export default function OndeAtuamos({ api }) {
 
   useEffect(() => {
     let vivo = true;
-    const carregar = () => fetch(`${api}/api/nacional/mapa-publico`)
-      .then((r) => (r.ok ? r.json() : null))
+    const url = `${api}/api/nacional/mapa-publico`;
+    /* A primeira leitura sai do cache dividido com o topo da página (que mostra o mesmo total
+       de clientes); as releituras de minuto em minuto vão direto à API, para o número subir
+       com a página aberta. */
+    const carregar = (primeira) => (primeira ? buscarUmaVez(url) : fetch(url).then((r) => (r.ok ? r.json() : null)))
       /* Sem nenhum cliente posicionado no mapa (logo depois de publicar, enquanto os
          empreendimentos ainda não têm cidade e regional no sistema), a seção não aparece:
          "0 clientes atendidos" na home seria pior do que não mostrar nada. */
       .then((d) => { if (vivo) setDados(d && d.regionais?.length && d.totais?.clientes > 0 ? d : false); })
       .catch(() => { if (vivo) setDados((atual) => atual || false); });
-    carregar();
-    const t = setInterval(() => { if (document.visibilityState === "visible") carregar(); }, ATUALIZAR_A_CADA_MS);
+    carregar(true);
+    const t = setInterval(() => { if (document.visibilityState === "visible") carregar(false); }, ATUALIZAR_A_CADA_MS);
     return () => { vivo = false; clearInterval(t); };
   }, [api]);
 
