@@ -20,6 +20,8 @@ import { buscarUmaVez } from "./dadosPublicos.js";
    ========================================================================== */
 
 const SISTEMA = "https://sistema.fnedificacoes.com.br/";
+/* A loja FN Home mora no sistema, na mesma página que o cliente logado vê. */
+const LOJA_FN_HOME = "https://sistema.fnedificacoes.com.br/?pagina=fn-home";
 const WHATSAPP = "https://wa.me/5581983061305?text=" +
   encodeURIComponent("Olá! Vim pelo site e gostaria de solicitar uma vistoria.");
 const INSTAGRAM = "https://instagram.com/fn.edificacoes";
@@ -29,7 +31,9 @@ const CNPJ_EXIBIDO = "69.212.890/0001-00";
 /* Seis itens, não mais. Com oito o menu quebrava em duas linhas num notebook de 1024px e a
    página ganhava rolagem lateral — o primeiro defeito que se vê ao abrir o site. "Contato"
    saiu porque o botão ao lado já é o contato; "Entregas" e "Onde atuamos" são alcançados
-   rolando e pelo rodapé. */
+   rolando e pelo rodapé. Em out/2026 veio o pedido de pôr o FN Home no menu, em destaque, sem
+   tirar o FN Club: para caber, o espaço entre os itens diminui nas telas mais estreitas (ver
+   .menu no CSS). O terceiro campo marca o item em destaque (a loja, com o selo "Loja"). */
 const NAVEGACAO = [
   ["#servicos", "Serviços"],
   ["#como-funciona", "Como funciona"],
@@ -37,6 +41,7 @@ const NAVEGACAO = [
   ["#depoimentos", "Depoimentos"],
   ["#duvidas", "Dúvidas"],
   ["#parceiros", "FN Club"],
+  ["#fn-home", "FN Home", true],
 ];
 
 /* Ícones locais: nenhuma biblioteca externa só para desenhar cinco traços. */
@@ -162,6 +167,17 @@ const CLUB = [
   ["Vidraçaria", "Box, espelhos e fechamentos"],
   ["Reformas e manutenção", "Serviços técnicos para o imóvel"],
   ["Serviços para o lar", "Internet, limpeza e mudança"],
+];
+
+/* Só aparece se a vitrine do sistema não responder: a seção do FN Home continua de pé, com o
+   que a loja costuma ter, em vez de sumir — ela existe para levar o visitante até a loja. */
+const FN_HOME_CATEGORIAS = [
+  ["Iluminação", "Lâmpadas, luminárias e LED"],
+  ["Elétrica e casa inteligente", "Tomadas, sensores e campainha"],
+  ["Banheiro", "Acessórios e organização"],
+  ["Cozinha", "Utensílios e pequenos eletros"],
+  ["Limpeza", "Para a primeira faxina"],
+  ["Potes e organização", "Armários e despensa"],
 ];
 
 const DUVIDAS = [
@@ -528,6 +544,142 @@ function Depoimentos() {
   );
 }
 
+/* ---------- FN Home ----------
+   Os produtos são os mesmos da loja do sistema (/api/afiliados/mercadolivre/vitrine), que a
+   Gerência cadastra com o link de afiliado da FN. Aqui vai só uma amostra, alternando as
+   categorias para a fileira não sair toda de lâmpada; a loja inteira fica no sistema.
+
+   Ao contrário dos depoimentos, a seção não some quando a API falha: sem produto, mostra as
+   categorias e o botão da loja, que é o que a seção existe para vender. */
+const PRODUTOS_NO_SITE = 12;
+
+function amostraDaVitrine(produtos) {
+  const filas = new Map();
+  for (const p of produtos) {
+    if (!p.foto || !p.link) continue;
+    const categoria = p.categoria || "";
+    if (!filas.has(categoria)) filas.set(categoria, []);
+    filas.get(categoria).push(p);
+  }
+  const listas = [...filas.values()];
+  const escolhidos = [];
+  for (let i = 0; escolhidos.length < PRODUTOS_NO_SITE && listas.some((l) => l.length > i); i++) {
+    for (const l of listas) if (l[i] && escolhidos.length < PRODUTOS_NO_SITE) escolhidos.push(l[i]);
+  }
+  return escolhidos;
+}
+
+const reais = (v) => Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const diaMes = (iso) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+
+function FnHome() {
+  const [produtos, setProdutos] = useState(null); // null = carregando; [] = mostrar as categorias
+
+  useEffect(() => {
+    let vivo = true;
+    buscarUmaVez(`${API}/api/afiliados/mercadolivre/vitrine`)
+      .then((d) => { if (vivo) setProdutos(amostraDaVitrine(d?.produtos || [])); });
+    return () => { vivo = false; };
+  }, []);
+
+  /* O botão é o link do Mercado Livre; o clique é contado no sistema, como na loja de lá, para
+     o Financeiro do FN Home saber de onde vem a venda. no-cors: a resposta não interessa e a
+     rota não precisa abrir CORS para isso. */
+  const contarClique = (id) => {
+    fetch(`${API}/api/afiliados/mercadolivre/${encodeURIComponent(id)}/clique`,
+      { method: "POST", mode: "no-cors", keepalive: true }).catch(() => {});
+  };
+
+  return (
+    <section className="secao" id="fn-home">
+      <div className="env">
+        <div className="secao__intro secao__intro--linha">
+          <div>
+            <p className="olho">FN Home · a loja da FN</p>
+            <h2>Chegou a chave. Agora é equipar o imóvel.</h2>
+            <p>
+              A loja da FN reúne o que costuma faltar depois da entrega — iluminação, elétrica,
+              banheiro, cozinha e organização —, escolhido por quem vistoria apartamento novo
+              todo dia. <strong>É aberta a todos:</strong> não precisa ser cliente da FN nem fazer
+              cadastro para comprar.
+            </p>
+          </div>
+          <a className="btn btn--azul" href={LOJA_FN_HOME} target="_blank" rel="noopener">
+            Entrar na loja
+          </a>
+        </div>
+
+        {/* A proposta da loja em três linhas. A primeira é a que mais importa: o visitante que
+            ainda não contratou vistoria costuma achar que a loja é só para cliente. */}
+        <ul className="fnhome__proposta">
+          {[
+            ["Aberta a todos", "Não precisa ser cliente nem ter cadastro. É só entrar e escolher."],
+            ["Escolhido por técnicos", "Produtos que a equipe vê fazer falta em apartamento novo."],
+            ["Compra no Mercado Livre", "Pagamento, entrega e garantia pelo Mercado Livre, sem custo a mais."],
+          ].map(([titulo, texto]) => (
+            <li key={titulo}><Check /> <span><strong>{titulo}</strong>{texto}</span></li>
+          ))}
+        </ul>
+
+        {produtos && produtos.length === 0 && (
+          <div className="club__lista fnhome__categorias">
+            {FN_HOME_CATEGORIAS.map(([titulo, texto]) => (
+              <a className="club__item" key={titulo} href={LOJA_FN_HOME} target="_blank" rel="noopener">
+                {titulo}
+                <span>{texto}</span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {produtos && produtos.length > 0 && (
+        <>
+          <Carrossel rotulo="Produtos da loja FN Home">
+            {produtos.map((p) => {
+              const de = Number(p.preco_de) > Number(p.preco) ? p.preco_de : null;
+              return (
+                <a className="produto" key={p.id} href={p.link} target="_blank"
+                  rel="noopener sponsored nofollow" onClick={() => contarClique(p.id)}>
+                  <span className="produto__foto">
+                    <img src={p.foto} alt="" loading="lazy" decoding="async" />
+                    {de && <span className="produto__off">-{Math.round((1 - p.preco / de) * 100)}%</span>}
+                  </span>
+                  <span className="produto__corpo">
+                    {p.categoria && <span className="produto__cat">{p.categoria}</span>}
+                    <span className="produto__nome" title={p.titulo}>{p.titulo}</span>
+                    {p.preco ? (
+                      <span className="produto__preco">
+                        {de && <span className="produto__de">{reais(de)}</span>}
+                        {reais(p.preco)}
+                      </span>
+                    ) : (
+                      <span className="produto__sem-preco">Veja o preço no Mercado Livre</span>
+                    )}
+                    {p.preco && p.preco_conferido_em && (
+                      <span className="produto__data">Preço de {diaMes(p.preco_conferido_em)}</span>
+                    )}
+                    <span className="produto__ir">Comprar no Mercado Livre →</span>
+                  </span>
+                </a>
+              );
+            })}
+          </Carrossel>
+          <div className="env">
+            {/* Link de afiliado se identifica como tal, e o cliente precisa saber de quem cobrar
+                entrega e garantia — o mesmo aviso da loja no sistema. */}
+            <p className="fnhome__aviso">
+              Links de afiliado: a FN pode receber comissão do Mercado Livre pelas compras feitas por eles,
+              sem custo a mais para você. O preço pode ter mudado desde a data indicada; valor final,
+              entrega, troca e garantia são do Mercado Livre e do vendedor.
+            </p>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
 function Carrossel({ children, rotulo }) {
   const trilho = useRef(null);
 
@@ -708,9 +860,12 @@ export default function App() {
           </a>
 
           <nav className="menu" aria-label="Navegação principal">
-            {NAVEGACAO.map(([href, texto]) => (
-              <a key={href} href={href} className={secaoAtual === href ? "ativo" : undefined}
-                aria-current={secaoAtual === href ? "location" : undefined}>{texto}</a>
+            {NAVEGACAO.map(([href, texto, destaque]) => (
+              <a key={href} href={href}
+                className={[secaoAtual === href && "ativo", destaque && "menu__loja"].filter(Boolean).join(" ") || undefined}
+                aria-current={secaoAtual === href ? "location" : undefined}>
+                {texto}{destaque && <span className="menu__selo">Loja</span>}
+              </a>
             ))}
           </nav>
 
@@ -732,8 +887,10 @@ export default function App() {
         {gaveta && (
           <div className="gaveta" id="gaveta">
             <div className="env">
-              {NAVEGACAO.map(([href, texto]) => (
-                <a key={href} className="gaveta__link" href={href} onClick={() => setGaveta(false)}>{texto}</a>
+              {NAVEGACAO.map(([href, texto, destaque]) => (
+                <a key={href} className="gaveta__link" href={href} onClick={() => setGaveta(false)}>
+                  {texto}{destaque && <span className="menu__selo">Loja</span>}
+                </a>
               ))}
               <div className="gaveta__acoes">
                 <a className="btn btn--principal btn--bloco" href={SISTEMA} target="_blank" rel="noopener">
@@ -958,8 +1115,10 @@ export default function App() {
           </div>
         </section>
 
+        <FnHome />
+
         {/* ---------------- FN Club ---------------- */}
-        <section className="secao" id="parceiros">
+        <section className="secao secao--alt" id="parceiros">
           <div className="env club">
             <div>
               <p className="olho">FN Club</p>
@@ -1035,6 +1194,7 @@ export default function App() {
                 <li>Paulista, Recife e RMR</li>
                 <li><a href="#atuacao">Onde atuamos</a></li>
                 <li><a href="#entregas">Entregas realizadas</a></li>
+                <li><a href="#parceiros">FN Club</a></li>
                 <li><a href={WHATSAPP} target="_blank" rel="noopener">{TELEFONE_EXIBIDO}</a></li>
                 {/* Única repetição do sistema na página, e em texto — não outro botão. */}
                 <li><a href={SISTEMA} target="_blank" rel="noopener">Acessar o Sistema FN</a></li>
