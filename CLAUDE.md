@@ -4,9 +4,10 @@ Site público da FN Edificações, em **fnedificacoes.com.br**. É a vitrine: ex
 serviços, mostra as entregas de chaves e manda quem é cliente, equipe ou parceiro para o
 sistema. Não tem login nem banco.
 
-**Conversa com a API em dois pontos**, ambos públicos e sem token: a seção de depoimentos
-busca `/api/avaliacoes/vitrine` (só o que o Atendimento aprovou para aparecer) e a seção
-"Onde atuamos" busca `/api/nacional/mapa-publico`. O topo da página reaproveita as duas
+**Conversa com a API em três pontos**, todos públicos e sem token: a seção de depoimentos
+busca `/api/avaliacoes/vitrine` (só o que o Atendimento aprovou para aparecer), a seção
+"Onde atuamos" busca `/api/nacional/mapa-publico` e a seção FN Home busca
+`/api/afiliados/mercadolivre/vitrine` (ver "FN Home" abaixo). O topo da página reaproveita as duas primeiras
 respostas para mostrar o total de clientes e a nota média (`NumerosDoSistema` no `App.jsx`;
 cada endereço é chamado uma vez só, pelo cache de `src/dadosPublicos.js`). Se a chamada
 falhar, a seção (ou o número do topo) se esconde em vez de quebrar o site —
@@ -97,6 +98,31 @@ no sistema), a seção não aparece — "0 clientes atendidos" na home seria pio
 quebrava em duas linhas num notebook de 1024px e a página ganhava rolagem lateral. O link fica
 no rodapé. Abaixo de 1100px o menu vira o botão de três traços.
 
+## FN Home (loja)
+
+`FnHome` no `App.jsx`, logo antes do FN Club. Divulga a loja que mora no sistema
+(`LOJA_FN_HOME`, `?pagina=fn-home`): os produtos que a Gerência cadastra lá, com o link de
+afiliado do Mercado Livre da FN. O site mostra uma amostra de até 12, alternando as categorias,
+no mesmo carrossel das entregas; cada cartão é o próprio link do Mercado Livre, e o clique é
+contado no sistema (`POST .../clique` com `mode: "no-cors"`, sem esperar resposta).
+
+- Produto novo cadastrado no sistema aparece aqui **sem mexer no site**. Não escreva produto
+  nem preço à mão.
+- Ao contrário dos depoimentos e do mapa, **a seção não some** se a API falhar: mostra as
+  categorias (`FN_HOME_CATEGORIAS`) e o botão da loja. Se só aparecerem as categorias, a
+  vitrine não respondeu — confira a API antes de mexer no site.
+- A vitrine precisa de CORS aberto, que o backend dá em `ROTAS_PUBLICAS_ABERTAS`
+  (`src/server.js`) desde out/2026.
+- O aviso de link de afiliado embaixo dos cartões é obrigatório (publicidade com afiliado se
+  identifica) e repete o da loja no sistema.
+- O texto e as três linhas de proposta (`fnhome__proposta`) dizem que a loja é **aberta a todos**,
+  sem ser cliente nem ter cadastro — é verdade no sistema (`?pagina=fn-home` não pede login) e é o
+  que o visitante que ainda não contratou vistoria precisa ler.
+- Menu do topo com **sete itens** desde out/2026: o FN Home entrou ao lado do FN Club, em destaque
+  (`menu__loja`, contorno de areia e selo "Loja"). Para caber, o respiro dos itens diminui até
+  1280px e o subtítulo da marca some entre 1101 e 1240px — medido sem rolagem lateral em 1101,
+  1241 e 1281px. Um oitavo item não cabe. Link curto para divulgar: **fnedificacoes.com.br/fn-home**.
+
 ## Rotas de redirecionamento
 
 Páginas estáticas em `public/`, criadas para não quebrar links do site antigo e de
@@ -104,6 +130,7 @@ material impresso. Cada uma faz `<meta refresh>` + `location.replace`:
 
 - `/acesso` e `/sistema` → `https://sistema.fnedificacoes.com.br/`
 - `/fn-club` → `https://fnedificacoes.com.br/#parceiros`
+- `/fn-home` → `https://sistema.fnedificacoes.com.br/?pagina=fn-home` (a loja, para Instagram e panfleto)
 
 Se um link novo for divulgado em panfleto ou Instagram, o padrão é criar mais uma pasta
 dessas, e não uma rota de SPA — o Pages não conhece rotas de aplicação.
