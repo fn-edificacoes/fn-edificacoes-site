@@ -553,16 +553,24 @@ function Depoimentos() {
    categorias e o botão da loja, que é o que a seção existe para vender. */
 const PRODUTOS_NO_SITE = 12;
 
+/* As ofertas vêm primeiro (até metade da fileira, o maior desconto na frente — pedido da Gerência,
+   nov/2026: dar mais destaque à loja e aos descontos); o resto alterna as categorias. */
 function amostraDaVitrine(produtos) {
+  const comFoto = produtos.filter((p) => p.foto && p.link);
+  const ofertas = comFoto.filter((p) => ofertaDe(p))
+    .sort((a, b) => ofertaDe(b).pct - ofertaDe(a).pct)
+    .slice(0, Math.ceil(PRODUTOS_NO_SITE / 2));
+  const jaEscolhidos = new Set(ofertas.map((p) => p.id));
   const filas = new Map();
   for (const p of produtos) {
+    if (jaEscolhidos.has(p.id)) continue;
     if (!p.foto || !p.link) continue;
     const categoria = p.categoria || "";
     if (!filas.has(categoria)) filas.set(categoria, []);
     filas.get(categoria).push(p);
   }
   const listas = [...filas.values()];
-  const escolhidos = [];
+  const escolhidos = [...ofertas];
   for (let i = 0; escolhidos.length < PRODUTOS_NO_SITE && listas.some((l) => l.length > i); i++) {
     for (const l of listas) if (l[i] && escolhidos.length < PRODUTOS_NO_SITE) escolhidos.push(l[i]);
   }
@@ -570,15 +578,34 @@ function amostraDaVitrine(produtos) {
 }
 
 const reais = (v) => Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+/* O desconto do anúncio, com a mesma regra da loja do sistema (ofertaDe, em fn-home-mercadolivre.jsx
+   do frontend): o texto como o Mercado Livre escreve ("7% OFF no Pix") manda no percentual; sem
+   ele, vale o "De" riscado maior que o preço. Sem nenhum dos dois, não há oferta — nada inventado. */
+function ofertaDe(p) {
+  const de = Number(p.preco_de) > Number(p.preco) ? Number(p.preco_de) : null;
+  const pelaDiferenca = de ? Math.round((1 - Number(p.preco) / de) * 100) : null;
+  const texto = String(p.desconto_texto || "").trim();
+  const doTexto = Number((/(\d{1,2})\s*%/.exec(texto) || [])[1]) || null;
+  const pct = doTexto || pelaDiferenca;
+  if (!pct) return null;
+  return { pct, texto: texto || `${pct}% OFF`, de, economia: de ? de - Number(p.preco) : null };
+}
+const maiorDescontoDa = (produtos) => Math.max(0, ...(produtos || []).map((p) => ofertaDe(p)?.pct || 0));
 const diaMes = (iso) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
 function FnHome() {
   const [produtos, setProdutos] = useState(null); // null = carregando; [] = mostrar as categorias
+  const [maiorDesconto, setMaiorDesconto] = useState(0);
 
   useEffect(() => {
     let vivo = true;
     buscarUmaVez(`${API}/api/afiliados/mercadolivre/vitrine`)
-      .then((d) => { if (vivo) setProdutos(amostraDaVitrine(d?.produtos || [])); });
+      .then((d) => {
+        if (!vivo) return;
+        setProdutos(amostraDaVitrine(d?.produtos || []));
+        setMaiorDesconto(maiorDescontoDa(d?.produtos));
+      });
     return () => { vivo = false; };
   }, []);
 
@@ -597,6 +624,7 @@ function FnHome() {
           <div>
             <p className="olho">FN Home · a loja da FN</p>
             <h2>Chegou a chave. Agora é equipar o imóvel.</h2>
+            {maiorDesconto > 0 && <p className="fnhome__oferta">Ofertas com até {maiorDesconto}% OFF</p>}
             <p>
               A loja da FN reúne o que costuma faltar depois da entrega — iluminação, elétrica,
               banheiro, cozinha e organização —, escolhido por quem vistoria apartamento novo
@@ -637,13 +665,14 @@ function FnHome() {
         <>
           <Carrossel rotulo="Produtos da loja FN Home">
             {produtos.map((p) => {
-              const de = Number(p.preco_de) > Number(p.preco) ? p.preco_de : null;
+              const oferta = ofertaDe(p);
+              const de = oferta?.de || null;
               return (
                 <a className="produto" key={p.id} href={p.link} target="_blank"
                   rel="noopener sponsored nofollow" onClick={() => contarClique(p.id)}>
                   <span className="produto__foto">
                     <img src={p.foto} alt="" loading="lazy" decoding="async" />
-                    {de && <span className="produto__off">-{Math.round((1 - p.preco / de) * 100)}%</span>}
+                    {oferta && <span className="produto__off">-{oferta.pct}%</span>}
                   </span>
                   <span className="produto__corpo">
                     {p.categoria && <span className="produto__cat">{p.categoria}</span>}
@@ -655,6 +684,12 @@ function FnHome() {
                       </span>
                     ) : (
                       <span className="produto__sem-preco">Veja o preço no Mercado Livre</span>
+                    )}
+                    {oferta && (
+                      <span className="produto__desconto">
+                        {oferta.texto}
+                        {oferta.economia > 0 && <span> · economize {reais(oferta.economia)}</span>}
+                      </span>
                     )}
                     {p.preco && p.preco_conferido_em && (
                       <span className="produto__data">Preço de {diaMes(p.preco_conferido_em)}</span>
@@ -840,6 +875,31 @@ function BarraCelular() {
   );
 }
 
+/* Faixa fina acima do cabeçalho anunciando a loja (pedido da Gerência, nov/2026: "divulgue melhor a FN
+   Home, de mais destaque"). Não é fixa: some ao rolar, e o cabeçalho fixo continua sendo o de sempre.
+   O "até X% OFF" só aparece com a vitrine respondendo — número que não vem da base não vai ao site. */
+function FaixaLoja() {
+  const [maior, setMaior] = useState(0);
+  useEffect(() => {
+    let vivo = true;
+    buscarUmaVez(`${API}/api/afiliados/mercadolivre/vitrine`)
+      .then((d) => { if (vivo) setMaior(maiorDescontoDa(d?.produtos)); });
+    return () => { vivo = false; };
+  }, []);
+  return (
+    <a className="faixa-loja" href={LOJA_FN_HOME} target="_blank" rel="noopener">
+      <span className="faixa-loja__selo">Novo</span>
+      <span className="faixa-loja__texto">
+        <strong>Loja FN Home</strong>
+        {/* No celular só o essencial: a faixa com o texto inteiro passava de três linhas. */}
+        <span className="faixa-loja__mais"> — tudo para equipar o seu imóvel, aberta a todos</span>
+        {maior > 0 && <> · <strong>ofertas de até {maior}% OFF</strong></>}
+      </span>
+      <span className="faixa-loja__ir">Ver a loja →</span>
+    </a>
+  );
+}
+
 export default function App() {
   const [gaveta, setGaveta] = useState(false);
   const secaoAtual = useSecaoAtual();
@@ -848,6 +908,7 @@ export default function App() {
   return (
     <>
       <a className="pular" href="#conteudo">Pular para o conteúdo</a>
+      <FaixaLoja />
 
       <header className={`cabecalho${rolou ? " cabecalho--rolou" : ""}`}>
         <div className="env cabecalho__barra">
@@ -1003,6 +1064,10 @@ export default function App() {
           </div>
         </section>
 
+        {/* A loja logo depois dos serviços (estava perto do fim, depois das Dúvidas): pedido da
+            Gerência em nov/2026 para dar mais destaque ao FN Home. */}
+        <FnHome />
+
         {/* ---------------- Como funciona ---------------- */}
         <section className="secao secao--alt" id="como-funciona">
           <div className="env">
@@ -1114,8 +1179,6 @@ export default function App() {
             </div>
           </div>
         </section>
-
-        <FnHome />
 
         {/* ---------------- FN Club ---------------- */}
         <section className="secao secao--alt" id="parceiros">

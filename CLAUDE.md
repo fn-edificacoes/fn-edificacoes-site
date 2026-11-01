@@ -100,7 +100,8 @@ no rodapé. Abaixo de 1100px o menu vira o botão de três traços.
 
 ## FN Home (loja)
 
-`FnHome` no `App.jsx`, logo antes do FN Club. Divulga a loja que mora no sistema
+`FnHome` no `App.jsx`, **logo depois de Serviços** (era antes do FN Club; subiu em nov/2026 a pedido
+da Gerência: "divulgue melhor a FN Home, de mais destaque"). Divulga a loja que mora no sistema
 (`LOJA_FN_HOME`, `?pagina=fn-home`): os produtos que a Gerência cadastra lá, com o link de
 afiliado do Mercado Livre da FN. O site mostra uma amostra de até 12, alternando as categorias,
 no mesmo carrossel das entregas; cada cartão é o próprio link do Mercado Livre, e o clique é
@@ -122,6 +123,15 @@ contado no sistema (`POST .../clique` com `mode: "no-cors"`, sem esperar respost
   (`menu__loja`, contorno de areia e selo "Loja"). Para caber, o respiro dos itens diminui até
   1280px e o subtítulo da marca some entre 1101 e 1240px — medido sem rolagem lateral em 1101,
   1241 e 1281px. Um oitavo item não cabe. Link curto para divulgar: **fnedificacoes.com.br/fn-home**.
+- **Faixa da loja acima do cabeçalho** (`FaixaLoja`, nov/2026): "Novo · Loja FN Home — … · ofertas de até
+  X% OFF · Ver a loja →". Não é fixa (some ao rolar; o cabeçalho fixo segue o de sempre). No celular só
+  "Loja FN Home · ofertas de até X% OFF" — o texto inteiro passava de três linhas.
+- **Descontos**: `ofertaDe(p)` é a mesma regra da loja do sistema — o texto do anúncio
+  (`desconto_texto`, "7% OFF no Pix") manda no percentual; sem ele, o "De" riscado maior que o preço;
+  sem nenhum, não há oferta. A amostra põe até 6 ofertas na frente (maior desconto primeiro) e completa
+  alternando as categorias. Selo `-X%` e o chip "Ofertas com até X% OFF" em **areia** (a cor de destaque
+  do site, não o vermelho do sistema); o texto do desconto e o "economize" em verde escuro (#1B7F4B —
+  o `--zap` dá 2,9:1 sobre branco). O "até X% OFF" só aparece com a vitrine respondendo.
 
 ## Rotas de redirecionamento
 
