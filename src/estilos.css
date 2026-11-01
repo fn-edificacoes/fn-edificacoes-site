@@ -113,6 +113,25 @@ p { margin: 0; text-wrap: pretty; }
   outline: 3px solid var(--azul-medio); outline-offset: 3px; border-radius: 6px;
 }
 
+/* ---------- Faixa da loja (acima do cabeçalho) ---------- */
+.faixa-loja {
+  display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  padding: 9px 16px; background: var(--azul-noite); color: #fff; text-decoration: none;
+  font-size: .86rem; line-height: 1.35; text-align: center;
+  border-bottom: 1px solid rgba(200, 164, 77, .35);
+}
+.faixa-loja strong { color: #F1D58A; }
+.faixa-loja__selo {
+  padding: 1px 7px; border-radius: 999px; background: var(--areia); color: #231B04;
+  font-size: .66rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+}
+.faixa-loja__ir { font-weight: 700; white-space: nowrap; }
+.faixa-loja:hover .faixa-loja__ir { text-decoration: underline; }
+@media (max-width: 560px) {
+  .faixa-loja { font-size: .8rem; gap: 6px; padding: 8px 12px; }
+  .faixa-loja__mais { display: none; }
+}
+
 /* ---------- Cabeçalho ---------- */
 .cabecalho {
   position: sticky; top: 0; z-index: 50;
@@ -438,9 +457,18 @@ p { margin: 0; text-wrap: pretty; }
   border-bottom: 1px solid var(--linha); display: grid; place-items: center;
 }
 .produto__foto img { width: 100%; height: 100%; object-fit: contain; }
+/* O desconto em areia, a cor de destaque do site: chama o olho sem virar anúncio de loja. */
 .produto__off {
-  position: absolute; top: 10px; left: 10px; background: var(--azul-marinho); color: #fff;
-  font-size: .72rem; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+  position: absolute; top: 10px; left: 10px; background: var(--areia); color: #231B04;
+  font-size: .82rem; font-weight: 800; padding: 4px 9px; border-radius: 7px;
+  box-shadow: 0 2px 6px rgba(35, 27, 4, .18);
+}
+/* Verde escuro: o --zap (#1FA855) dá 2,9:1 sobre branco, pouco para texto deste tamanho. */
+.produto__desconto { font-size: .8rem; font-weight: 700; color: #1B7F4B; }
+.produto__desconto span { font-weight: 600; }
+.fnhome__oferta {
+  display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 999px;
+  background: var(--areia); color: #231B04; font-size: .86rem; font-weight: 800;
 }
 .produto__corpo { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 16px; }
 .produto__cat { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--azul-medio); }
